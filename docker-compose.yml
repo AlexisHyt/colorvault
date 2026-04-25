@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  colorvault-alexishayat-me:
+    build: .
+    container_name: colorvault-alexishayat-me
+    restart: unless-stopped
+    ports:
+      - "3005:3005"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

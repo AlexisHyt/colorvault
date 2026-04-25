@@ -1,0 +1,1 @@
+ALTER TABLE `website_colors` RENAME COLUMN "logoUrl" TO "logo";
