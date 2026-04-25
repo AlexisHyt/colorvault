@@ -21,4 +21,5 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H 37.59.125.170 >> ~/.ssh/known_hosts
-          rsync -avz --delete ./ debian@37.59.125.170:/home/debian/apps/web/colorvault.alexishayat.me
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -v debian@37.59.125.170 "echo 'SSH works!'"
+          rsync -avz --delete -e "ssh -vvv -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" ./ debian@37.59.125.170:/home/debian/apps/web/colorvault.alexishayat.me
