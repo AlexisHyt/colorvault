@@ -20,5 +20,3 @@ node_modules
 .vscode
 
 db/database.*
-
-pnpm-lock.yaml

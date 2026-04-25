@@ -21,5 +21,18 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H 37.59.125.170 >> ~/.ssh/known_hosts
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -v debian@37.59.125.170 "echo 'SSH works!'"
           rsync -avz --delete -e "ssh -vvv -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" ./ debian@37.59.125.170:/home/debian/apps/web/colorvault.alexishayat.me
+
+      - name: Build Docker and reload PM2
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no debian@37.59.125.170 "
+            cd /home/debian/apps/web/colorvault.alexishayat.me &&
+            docker compose build &&
+            docker compose up -d
+          "
+
