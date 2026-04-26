@@ -1,10 +1,9 @@
 "use server";
 
 import { and, eq } from "drizzle-orm";
-import { headers } from "next/headers";
 import { db } from "@/db";
 import { color, gradient, userFavorite, websiteColor } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { getVerifiedSession } from "@/lib/auth-utils";
 
 export type FavoriteColor = {
 	favoriteId: number;
@@ -46,8 +45,7 @@ export async function getFavorites(userId: string): Promise<RawFavorite[]> {
 		.select()
 		.from(userFavorite)
 		.where(eq(userFavorite.userId, userId))
-		.orderBy(userFavorite.createdAt)
-		.all();
+		.orderBy(userFavorite.createdAt);
 }
 
 export async function getFavoritesWithDetails(
@@ -60,8 +58,7 @@ export async function getFavoritesWithDetails(
 		.leftJoin(gradient, eq(userFavorite.gradientId, gradient.id))
 		.leftJoin(websiteColor, eq(userFavorite.websiteColorId, websiteColor.id))
 		.where(eq(userFavorite.userId, userId))
-		.orderBy(userFavorite.createdAt)
-		.all();
+		.orderBy(userFavorite.createdAt);
 
 	const items: FavoriteItem[] = [];
 
@@ -105,7 +102,7 @@ export async function getFavoritesWithDetails(
 }
 
 async function getAuthenticatedUserId(): Promise<string> {
-	const session = await auth.api.getSession({ headers: await headers() });
+	const session = await getVerifiedSession();
 	if (!session?.user?.id) throw new Error("Unauthorized");
 	return session.user.id;
 }
@@ -142,8 +139,7 @@ export async function removeFavorite(favoriteId: number): Promise<void> {
 		.from(userFavorite)
 		.where(
 			and(eq(userFavorite.id, favoriteId), eq(userFavorite.userId, userId)),
-		)
-		.all();
+		);
 
 	if (!existing) throw new Error("Favorite not found");
 

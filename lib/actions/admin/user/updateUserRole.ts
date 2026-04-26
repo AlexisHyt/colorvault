@@ -1,19 +1,16 @@
 "use server";
 
 import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
 import { db } from "@/db";
 import { user } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { getVerifiedSession } from "@/lib/auth-utils";
 
 export async function updateUserRole(
 	userId: string,
 	newRole: "user" | "admin",
 ) {
 	try {
-		const session = await auth.api.getSession({
-			headers: await headers(),
-		});
+		const session = await getVerifiedSession();
 
 		if (session?.user.role !== "admin") {
 			return false;
@@ -24,8 +21,7 @@ export async function updateUserRole(
 			.set({
 				role: newRole,
 			})
-			.where(eq(user.id, userId))
-			.run();
+			.where(eq(user.id, userId));
 
 		return true;
 	} catch (error) {

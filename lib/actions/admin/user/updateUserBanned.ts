@@ -1,16 +1,13 @@
 "use server";
 
 import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
 import { db } from "@/db";
 import { user } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { getVerifiedSession } from "@/lib/auth-utils";
 
 export async function updateUserBanned(userId: string, currentBanned: boolean) {
 	try {
-		const session = await auth.api.getSession({
-			headers: await headers(),
-		});
+		const session = await getVerifiedSession();
 
 		if (session?.user.role !== "admin") {
 			return false;
@@ -19,10 +16,9 @@ export async function updateUserBanned(userId: string, currentBanned: boolean) {
 		await db
 			.update(user)
 			.set({
-				banned: currentBanned ? 1 : 0,
+				banned: currentBanned,
 			})
-			.where(eq(user.id, userId))
-			.run();
+			.where(eq(user.id, userId));
 
 		return true;
 	} catch (error) {

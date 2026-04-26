@@ -30,14 +30,14 @@ export default function SignUpPage() {
         },
         {
           onSuccess: () => {
-            router.push('/');
+            router.push(`/verify-email?email=${encodeURIComponent(email)}`);
           },
           onError: (ctx) => {
             setError(ctx.error.message || 'Failed to sign up');
           },
         }
       );
-    } catch (err) {
+    } catch {
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
@@ -45,7 +45,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 px-4">
       <Card className="w-full max-w-md border-slate-700 bg-slate-900/50 backdrop-blur">
         <div className="p-8">
           <div className="mb-8">

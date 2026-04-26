@@ -1,1 +1,0 @@
-ALTER TABLE `gradients` ADD `colorMid` text;

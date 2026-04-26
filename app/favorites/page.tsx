@@ -1,11 +1,10 @@
-import { headers } from 'next/headers';
 import { Heart } from 'lucide-react';
-import { auth } from '@/lib/auth';
 import { getFavoritesWithDetails } from '@/lib/actions/favorites';
+import { getVerifiedSession } from '@/lib/auth-utils';
 import { FavoritesClient } from '@/components/favorites-client';
 
 export default async function FavoritesPage() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getVerifiedSession();
 
   if (!session?.user) {
     return (
@@ -13,7 +12,7 @@ export default async function FavoritesPage() {
         <div className="text-center py-12">
           <h1 className="text-3xl font-bold text-white mb-4">Sign In to View Favorites</h1>
           <p className="text-slate-400 mb-8">
-            You need to be signed in to view your favorite colors and gradients.
+            You need to be signed in with a verified email to view your favorites.
           </p>
         </div>
       </main>

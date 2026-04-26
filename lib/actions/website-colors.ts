@@ -10,6 +10,5 @@ export async function getWebsiteColors(): Promise<WebsiteColor[]> {
 	return db
 		.select()
 		.from(websiteColor)
-		.orderBy(asc(websiteColor.websiteName))
-		.all();
+		.orderBy(asc(websiteColor.websiteName));
 }

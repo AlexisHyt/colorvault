@@ -23,7 +23,7 @@ jobs:
           ssh-keyscan -H 37.59.125.170 >> ~/.ssh/known_hosts
           rsync -avz --delete -e "ssh -vvv -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" ./ debian@37.59.125.170:/home/debian/apps/web/colorvault.alexishayat.me
 
-      - name: Build Docker and reload PM2
+      - name: Build Docker
         env:
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
         run: |

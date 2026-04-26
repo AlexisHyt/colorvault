@@ -1,1 +1,0 @@
-ALTER TABLE `color_palettes` ADD `slug` text;

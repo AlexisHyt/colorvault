@@ -93,7 +93,7 @@ export function AdminUsersTab() {
 						</tr>
 					</thead>
 					<tbody className="divide-y divide-slate-700">
-						{users?.map((user) => (
+						{users?.map((user: MappedUsers[number]) => (
 							<tr key={user.id} className="hover:bg-slate-800/30 transition">
 								<td className="px-6 py-4 text-sm text-white">{user.email}</td>
 								<td className="px-6 py-4 text-sm text-slate-400">

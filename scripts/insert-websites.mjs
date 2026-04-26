@@ -14,7 +14,7 @@
  *   node scripts/insert-websites.mjs --clear   → wipe then re-insert
  */
 
-import Database from "better-sqlite3";
+import postgres from "postgres";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -41,10 +41,22 @@ function loadEnv() {
 	return env;
 }
 
-function resolveDbPath(env) {
-	const raw = env.DB_FILE_NAME || "file:db/database.sqlite";
-	const filePart = raw.startsWith("file:") ? raw.slice(5) : raw;
-	return path.isAbsolute(filePart) ? filePart : path.join(ROOT, filePart);
+function resolveDatabaseUrl(env) {
+	const url = env.DATABASE_URL || process.env.DATABASE_URL;
+	if (!url) {
+		throw new Error("DATABASE_URL is missing in .env or process env");
+	}
+	return url;
+}
+
+function printHelp() {
+	console.log(`
+Usage:
+  node scripts/insert-websites.mjs           Insert all websites (skip duplicates)
+  node scripts/insert-websites.mjs --list    List existing websites
+  node scripts/insert-websites.mjs --clear   Clear table then re-insert
+  node scripts/insert-websites.mjs --help    Show this help message
+`);
 }
 
 // ---------------------------------------------------------------------------
@@ -505,12 +517,12 @@ const WEBSITES = [
 // Core logic
 // ---------------------------------------------------------------------------
 
-function listWebsites(db) {
-	const rows = db
-		.prepare(
-			"SELECT id, websiteName, logo, primaryColor, secondaryColor, accentColor FROM website_colors ORDER BY id",
-		)
-		.all();
+async function listWebsites(sql) {
+	const rows = await sql`
+		SELECT id, "websiteName", logo, "primaryColor", "secondaryColor", "accentColor"
+		FROM website_colors
+		ORDER BY id
+	`;
 
 	if (rows.length === 0) {
 		console.log("No website entries found.");
@@ -529,32 +541,23 @@ function listWebsites(db) {
 	console.log();
 }
 
-function insertWebsites(db, { clear = false } = {}) {
+async function insertWebsites(sql, { clear = false } = {}) {
 	const now = new Date().toISOString();
 
 	if (clear) {
-		db.prepare("DELETE FROM website_colors").run();
+		await sql`DELETE FROM website_colors`;
 		console.log("🗑️  Cleared all existing website_colors entries.\n");
 	}
-
-	const checkExisting = db.prepare(
-		"SELECT id FROM website_colors WHERE websiteName = ?",
-	);
-
-	const insertStmt = db.prepare(`
-    INSERT INTO website_colors
-      (websiteName, logo, description, primaryColor, secondaryColor, accentColor, createdAt, updatedAt)
-    VALUES
-      (@websiteName, @logo, @description, @primaryColor, @secondaryColor, @accentColor, @createdAt, @updatedAt)
-  `);
 
 	let inserted = 0;
 	let skipped = 0;
 
-	const insertAll = db.transaction(() => {
+	await sql.begin(async (tx) => {
 		for (const site of WEBSITES) {
-			const existing = checkExisting.get(site.websiteName);
-			if (existing) {
+			const existing = await tx`
+				SELECT id FROM website_colors WHERE "websiteName" = ${site.websiteName} LIMIT 1
+			`;
+			if (existing.length > 0) {
 				console.log(`  ⏭️   Skipped  "${site.websiteName}" (already exists)`);
 				skipped++;
 				continue;
@@ -566,16 +569,12 @@ function insertWebsites(db, { clear = false } = {}) {
 				: null;
 			const accent = site.accentColor ? hexToOklch(site.accentColor) : null;
 
-			insertStmt.run({
-				websiteName: site.websiteName,
-				logo: site.logo ?? "FaGlobe",
-				description: site.description ?? null,
-				primaryColor: primary,
-				secondaryColor: secondary,
-				accentColor: accent,
-				createdAt: now,
-				updatedAt: now,
-			});
+			await tx`
+				INSERT INTO website_colors
+					("websiteName", logo, description, "primaryColor", "secondaryColor", "accentColor", "createdAt", "updatedAt")
+				VALUES
+					(${site.websiteName}, ${site.logo ?? "FaGlobe"}, ${site.description ?? null}, ${primary}, ${secondary}, ${accent}, ${now}, ${now})
+			`;
 
 			console.log(
 				`  ✔️   Inserted "${site.websiteName.padEnd(22)}"` +
@@ -586,7 +585,6 @@ function insertWebsites(db, { clear = false } = {}) {
 		}
 	});
 
-	insertAll();
 	console.log(
 		`\n✅  Done — ${inserted} website(s) inserted, ${skipped} skipped.\n`,
 	);
@@ -598,31 +596,40 @@ function insertWebsites(db, { clear = false } = {}) {
 
 const args = process.argv.slice(2);
 const env = loadEnv();
-const dbPath = resolveDbPath(env);
-
-if (!fs.existsSync(dbPath)) {
-	console.error(`❌  Database file not found: ${dbPath}`);
-	process.exit(1);
+if (args[0] === "--help" || args[0] === "-h") {
+	printHelp();
+	process.exit(0);
 }
 
-const db = new Database(dbPath);
-db.pragma("journal_mode = WAL");
-db.pragma("foreign_keys = ON");
+let databaseUrl;
+try {
+	databaseUrl = resolveDatabaseUrl(env);
+} catch (err) {
+	console.error(`❌  Error: ${err.message}`);
+	process.exit(1);
+}
+const sql = postgres(databaseUrl, { max: 1 });
 
 if (args[0] === "--list") {
-	listWebsites(db);
-	db.close();
+	try {
+		await listWebsites(sql);
+	} catch (err) {
+		console.error(`❌  Error: ${err.message}`);
+		await sql.end();
+		process.exit(1);
+	}
+	await sql.end();
 	process.exit(0);
 }
 
 const clear = args[0] === "--clear";
 
 try {
-	insertWebsites(db, { clear });
+	await insertWebsites(sql, { clear });
 } catch (err) {
 	console.error(`❌  Error: ${err.message}`);
-	db.close();
+	await sql.end();
 	process.exit(1);
 }
 
-db.close();
+await sql.end();

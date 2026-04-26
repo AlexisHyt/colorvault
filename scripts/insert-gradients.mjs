@@ -11,7 +11,7 @@
  *   node scripts/insert-gradients.mjs --clear   → wipe then re-insert
  */
 
-import Database from "better-sqlite3";
+import postgres from "postgres";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -34,10 +34,22 @@ function loadEnv() {
   return env;
 }
 
-function resolveDbPath(env) {
-  const raw = env.DB_FILE_NAME || "file:db/database.sqlite";
-  const filePart = raw.startsWith("file:") ? raw.slice(5) : raw;
-  return path.isAbsolute(filePart) ? filePart : path.join(ROOT, filePart);
+function resolveDatabaseUrl(env) {
+  const url = env.DATABASE_URL || process.env.DATABASE_URL;
+  if (!url) {
+    throw new Error("DATABASE_URL is missing in .env or process env");
+  }
+  return url;
+}
+
+function printHelp() {
+  console.log(`
+Usage:
+  node scripts/insert-gradients.mjs           Insert all gradients (skip duplicates)
+  node scripts/insert-gradients.mjs --list    List existing gradients
+  node scripts/insert-gradients.mjs --clear   Clear table then re-insert
+  node scripts/insert-gradients.mjs --help    Show this help message
+`);
 }
 
 /**
@@ -531,12 +543,12 @@ const GRADIENTS = [
 // Core logic
 // ---------------------------------------------------------------------------
 
-function listGradients(db) {
-  const rows = db
-    .prepare(
-      "SELECT id, name, category, colorStart, colorMid, colorEnd, angle FROM gradients ORDER BY id",
-    )
-    .all();
+async function listGradients(sql) {
+  const rows = await sql`
+    SELECT id, name, category, "colorStart", "colorMid", "colorEnd", angle
+    FROM gradients
+    ORDER BY id
+  `;
 
   if (rows.length === 0) {
     console.log("No gradient entries found.");
@@ -556,32 +568,21 @@ function listGradients(db) {
   console.log();
 }
 
-function insertGradients(db, { clear = false } = {}) {
+async function insertGradients(sql, { clear = false } = {}) {
   const now = new Date().toISOString();
 
   if (clear) {
-    db.prepare("DELETE FROM gradients").run();
+    await sql`DELETE FROM gradients`;
     console.log("🗑️  Cleared all existing gradient entries.\n");
   }
-
-  const checkExisting = db.prepare(
-    "SELECT id FROM gradients WHERE name = ?",
-  );
-
-  const insertStmt = db.prepare(`
-    INSERT INTO gradients
-      (name, description, category, colorStart, colorMid, colorEnd, angle, gradientString, createdAt, updatedAt)
-    VALUES
-      (@name, @description, @category, @colorStart, @colorMid, @colorEnd, @angle, @gradientString, @createdAt, @updatedAt)
-  `);
 
   let inserted = 0;
   let skipped = 0;
 
-  const insertAll = db.transaction(() => {
+  await sql.begin(async (tx) => {
     for (const g of GRADIENTS) {
-      const existing = checkExisting.get(g.name);
-      if (existing) {
+      const existing = await tx`SELECT id FROM gradients WHERE name = ${g.name} LIMIT 1`;
+      if (existing.length > 0) {
         console.log(`  ⏭️   Skipped  "${g.name}" (already exists)`);
         skipped++;
         continue;
@@ -589,18 +590,12 @@ function insertGradients(db, { clear = false } = {}) {
 
       const gradientString = buildGradientString(g);
 
-      insertStmt.run({
-        name: g.name,
-        description: g.description ?? null,
-        category: g.category,
-        colorStart: g.colorStart,
-        colorMid: g.colorMid ?? null,
-        colorEnd: g.colorEnd,
-        angle: g.angle,
-        gradientString,
-        createdAt: now,
-        updatedAt: now,
-      });
+      await tx`
+        INSERT INTO gradients
+          (name, description, category, "colorStart", "colorMid", "colorEnd", angle, "gradientString", "createdAt", "updatedAt")
+        VALUES
+          (${g.name}, ${g.description ?? null}, ${g.category}, ${g.colorStart}, ${g.colorMid ?? null}, ${g.colorEnd}, ${g.angle}, ${gradientString}, ${now}, ${now})
+      `;
 
       const mid = g.colorMid ? ` → ${g.colorMid}` : "";
       console.log(
@@ -612,7 +607,6 @@ function insertGradients(db, { clear = false } = {}) {
     }
   });
 
-  insertAll();
   console.log(
     `\n✅  Done — ${inserted} gradient(s) inserted, ${skipped} skipped.\n`,
   );
@@ -624,32 +618,41 @@ function insertGradients(db, { clear = false } = {}) {
 
 const args = process.argv.slice(2);
 const env = loadEnv();
-const dbPath = resolveDbPath(env);
-
-if (!fs.existsSync(dbPath)) {
-  console.error(`❌  Database file not found: ${dbPath}`);
-  process.exit(1);
+if (args[0] === "--help" || args[0] === "-h") {
+  printHelp();
+  process.exit(0);
 }
 
-const db = new Database(dbPath);
-db.pragma("journal_mode = WAL");
-db.pragma("foreign_keys = ON");
+let databaseUrl;
+try {
+  databaseUrl = resolveDatabaseUrl(env);
+} catch (err) {
+  console.error(`❌  Error: ${err.message}`);
+  process.exit(1);
+}
+const sql = postgres(databaseUrl, { max: 1 });
 
 if (args[0] === "--list") {
-  listGradients(db);
-  db.close();
+  try {
+    await listGradients(sql);
+  } catch (err) {
+    console.error(`❌  Error: ${err.message}`);
+    await sql.end();
+    process.exit(1);
+  }
+  await sql.end();
   process.exit(0);
 }
 
 const clear = args[0] === "--clear";
 
 try {
-  insertGradients(db, { clear });
+  await insertGradients(sql, { clear });
 } catch (err) {
   console.error(`❌  Error: ${err.message}`);
-  db.close();
+  await sql.end();
   process.exit(1);
 }
 
-db.close();
+await sql.end();
 

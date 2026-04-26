@@ -1,1 +1,0 @@
-ALTER TABLE `colors` RENAME COLUMN "hex" TO "color";

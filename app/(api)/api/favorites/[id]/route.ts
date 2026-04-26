@@ -1,22 +1,24 @@
 import { and, eq } from "drizzle-orm";
-import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { userFavorite } from "@/db/schema";
+import { getVerifiedSession } from "@/lib/auth-utils";
 
 export async function DELETE(
-	request: NextRequest,
-	{ params }: { params: { id: string } },
+	_request: NextRequest,
+	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
-		const headersList = await headers();
-		const userId = headersList.get("x-user-id");
+		const session = await getVerifiedSession();
 
-		if (!userId) {
+		if (!session?.user?.id) {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		const { id } = params;
+
+		const userId = session.user.id;
+
+		const { id } = await params;
 		if (!id) {
 			return NextResponse.json(
 				{ error: "Missing favorite ID" },

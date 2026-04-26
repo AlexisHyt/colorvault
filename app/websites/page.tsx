@@ -1,16 +1,16 @@
-import { headers } from "next/headers";
 import { WebsitesClient } from "@/components/websites-client";
 import { getFavorites } from "@/lib/actions/favorites";
 import { getWebsiteColors } from "@/lib/actions/website-colors";
-import { auth } from "@/lib/auth";
+import { getVerifiedSession } from "@/lib/auth-utils";
 
 export default async function WebsitesPage() {
 	const [websites, session] = await Promise.all([
 		getWebsiteColors(),
-		auth.api.getSession({ headers: await headers() }),
+		getVerifiedSession(),
 	]);
+	const isVerifiedUser = !!session?.user;
 
-	const initialFavorites = session?.user
+	const initialFavorites = isVerifiedUser
 		? await getFavorites(session.user.id)
 		: [];
 
@@ -19,7 +19,7 @@ export default async function WebsitesPage() {
 			<WebsitesClient
 				websites={websites}
 				initialFavorites={initialFavorites}
-				isAuthenticated={!!session?.user}
+				isAuthenticated={isVerifiedUser}
 			/>
 		</main>
 	);

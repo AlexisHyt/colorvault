@@ -1,1 +1,0 @@
-ALTER TABLE `row_palettes` ADD `name` text;

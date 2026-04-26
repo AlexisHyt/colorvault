@@ -10,6 +10,5 @@ export async function getGradients(): Promise<Gradient[]> {
 	return db
 		.select()
 		.from(gradient)
-		.orderBy(asc(gradient.category), asc(gradient.name))
-		.all();
+		.orderBy(asc(gradient.category), asc(gradient.name));
 }

@@ -1,69 +1,62 @@
 import { relations } from "drizzle-orm";
-import * as t from "drizzle-orm/sqlite-core";
-import { integer, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
+import { boolean, integer, pgTable, serial, text, timestamp, unique } from "drizzle-orm/pg-core";
 
-export const user = sqliteTable("user", {
-	id: t.text("id").primaryKey(),
-	name: t.text("name").notNull(),
-	email: t.text("email").notNull().unique(),
-	emailVerified: t.integer("emailVerified").notNull(),
-	image: t.text("image"),
+export const user = pgTable("user", {
+	id: text("id").primaryKey(),
+	name: text("name").notNull(),
+	email: text("email").notNull().unique(),
+	emailVerified: boolean("emailVerified").notNull(),
+	image: text("image"),
 	role: text("role", { enum: ["user", "admin"] })
 		.notNull()
 		.default("user"),
-	banned: t.integer("banned").notNull().default(0),
-	createdAt: t.integer("createdAt", { mode: "timestamp_ms" }).notNull(),
-	updatedAt: t.integer("updatedAt", { mode: "timestamp_ms" }).notNull(),
+	banned: boolean("banned").notNull().default(false),
+	createdAt: timestamp("createdAt").notNull(),
+	updatedAt: timestamp("updatedAt").notNull(),
 });
 
-export const session = sqliteTable("session", {
-	id: t.text("id").primaryKey(),
-	userId: t
-		.text("userId")
+export const session = pgTable("session", {
+	id: text("id").primaryKey(),
+	userId: text("userId")
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),
-	token: t.text("token").notNull().unique(),
-	expiresAt: t.integer("expiresAt", { mode: "timestamp_ms" }).notNull(),
-	ipAddress: t.text("ipAddress"),
-	userAgent: t.text("userAgent"),
-	createdAt: t.integer("createdAt", { mode: "timestamp_ms" }).notNull(),
-	updatedAt: t.integer("updatedAt", { mode: "timestamp_ms" }).notNull(),
+	token: text("token").notNull().unique(),
+	expiresAt: timestamp("expiresAt").notNull(),
+	ipAddress: text("ipAddress"),
+	userAgent: text("userAgent"),
+	createdAt: timestamp("createdAt").notNull(),
+	updatedAt: timestamp("updatedAt").notNull(),
 });
 
-export const account = sqliteTable("account", {
-	id: t.text("id").primaryKey(),
-	userId: t
-		.text("userId")
+export const account = pgTable("account", {
+	id: text("id").primaryKey(),
+	userId: text("userId")
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),
-	accountId: t.text("accountId").notNull(),
-	providerId: t.text("providerId").notNull(),
-	accessToken: t.text("accessToken"),
-	refreshToken: t.text("refreshToken"),
-	accessTokenExpiresAt: t.integer("accessTokenExpiresAt", {
-		mode: "timestamp_ms",
-	}),
-	refreshTokenExpiresAt: t.integer("refreshTokenExpiresAt", {
-		mode: "timestamp_ms",
-	}),
-	scope: t.text("scope"),
-	idToken: t.text("idToken"),
-	password: t.text("password"),
-	createdAt: t.integer("createdAt", { mode: "timestamp_ms" }).notNull(),
-	updatedAt: t.integer("updatedAt", { mode: "timestamp_ms" }).notNull(),
+	accountId: text("accountId").notNull(),
+	providerId: text("providerId").notNull(),
+	accessToken: text("accessToken"),
+	refreshToken: text("refreshToken"),
+	accessTokenExpiresAt: timestamp("accessTokenExpiresAt"),
+	refreshTokenExpiresAt: timestamp("refreshTokenExpiresAt"),
+	scope: text("scope"),
+	idToken: text("idToken"),
+	password: text("password"),
+	createdAt: timestamp("createdAt").notNull(),
+	updatedAt: timestamp("updatedAt").notNull(),
 });
 
-export const verification = sqliteTable("verification", {
-	id: t.text("id").primaryKey(),
-	identifier: t.text("identifier").notNull(),
-	value: t.text("value").notNull(),
-	expiresAt: t.integer("expiresAt", { mode: "timestamp_ms" }).notNull(),
-	createdAt: t.integer("createdAt", { mode: "timestamp_ms" }).notNull(),
-	updatedAt: t.integer("updatedAt", { mode: "timestamp_ms" }).notNull(),
+export const verification = pgTable("verification", {
+	id: text("id").primaryKey(),
+	identifier: text("identifier").notNull(),
+	value: text("value").notNull(),
+	expiresAt: timestamp("expiresAt").notNull(),
+	createdAt: timestamp("createdAt").notNull(),
+	updatedAt: timestamp("updatedAt").notNull(),
 });
 
-export const colorPalette = sqliteTable("color_palettes", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
+export const colorPalette = pgTable("color_palettes", {
+	id: serial("id").primaryKey(),
 	slug: text("slug"),
 	name: text("name").notNull(),
 	description: text("description"),
@@ -72,16 +65,16 @@ export const colorPalette = sqliteTable("color_palettes", {
 	updatedAt: text("updatedAt").notNull().default("now"),
 });
 
-export const rowPalette = sqliteTable("row_palettes", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
+export const rowPalette = pgTable("row_palettes", {
+	id: serial("id").primaryKey(),
 	paletteId: integer("paletteId").references(() => colorPalette.id),
 	name: text("name"),
 	position: integer("position").default(0),
 	createdAt: text("createdAt").notNull().default("now"),
 });
 
-export const color = sqliteTable("colors", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
+export const color = pgTable("colors", {
+	id: serial("id").primaryKey(),
 	rowPaletteId: integer("rowPaletteId").references(() => rowPalette.id),
 	position: integer("position").notNull(),
 	name: text("name").notNull(),
@@ -89,8 +82,8 @@ export const color = sqliteTable("colors", {
 	createdAt: text("createdAt").notNull().default("now"),
 });
 
-export const websiteColor = sqliteTable("website_colors", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
+export const websiteColor = pgTable("website_colors", {
+	id: serial("id").primaryKey(),
 	websiteName: text("websiteName").notNull(),
 	logo: text("logo"),
 	description: text("description"),
@@ -101,8 +94,8 @@ export const websiteColor = sqliteTable("website_colors", {
 	updatedAt: text("updatedAt").notNull().default("now"),
 });
 
-export const gradient = sqliteTable("gradients", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
+export const gradient = pgTable("gradients", {
+	id: serial("id").primaryKey(),
 	name: text("name").notNull(),
 	description: text("description"),
 	category: text("category").notNull(),
@@ -115,10 +108,10 @@ export const gradient = sqliteTable("gradients", {
 	updatedAt: text("updatedAt").notNull().default("now"),
 });
 
-export const userFavorite = sqliteTable(
+export const userFavorite = pgTable(
 	"user_favorites",
 	{
-		id: integer("id").primaryKey({ autoIncrement: true }),
+		id: serial("id").primaryKey(),
 		userId: text("userId")
 			.notNull()
 			.references(() => user.id),
@@ -129,7 +122,6 @@ export const userFavorite = sqliteTable(
 	},
 	(table) => {
 		return {
-			// Ensure only one favorite type is set per user
 			unq: unique().on(
 				table.userId,
 				table.colorId,

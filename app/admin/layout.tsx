@@ -15,7 +15,10 @@ export default function AdminLayout({
 	const { data: session, isPending } = useSession();
 
 	useEffect(() => {
-		if (!isPending && (!session?.user || session.user.role !== "admin")) {
+		if (
+			!isPending &&
+			(!session?.user || !session.user.emailVerified || session.user.role !== "admin")
+		) {
 			router.push("/");
 		}
 	}, [session, isPending, router]);
@@ -28,7 +31,7 @@ export default function AdminLayout({
 		);
 	}
 
-	if (!session?.user || session.user.role !== "admin") {
+	if (!session?.user || !session.user.emailVerified || session.user.role !== "admin") {
 		return null;
 	}
 
