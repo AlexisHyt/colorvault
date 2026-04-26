@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,14 @@ import { authClient } from "@/lib/auth-client";
 import { mapAuthErrorToMessage } from "@/lib/auth-errors";
 
 export default function VerifyEmailPage() {
+	return (
+		<Suspense>
+			<VerifyEmailContent />
+		</Suspense>
+	);
+}
+
+function VerifyEmailContent() {
 	const searchParams = useSearchParams();
 	const [email, setEmail] = useState(searchParams.get("email") ?? "");
 	const [loading, setLoading] = useState(false);
