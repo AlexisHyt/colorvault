@@ -4,15 +4,22 @@ import { Copy } from "lucide-react";
 import { useMemo, useState } from "react";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { atomOneDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { FavoriteButton } from "@/components/FavoriteButton";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useFavorites } from "@/hooks/use-favorites";
 import type { Gradient } from "@/lib/actions/gradients";
+import type { RawFavorite } from "@/lib/actions/favorites";
 
 interface Props {
 	gradients: Gradient[];
+	initialFavorites?: RawFavorite[];
+	isAuthenticated?: boolean;
 }
 
-export function GradientsClient({ gradients }: Props) {
+export function GradientsClient({ gradients, initialFavorites = [], isAuthenticated = false }: Props) {
+	const { isFavorite, toggleFavorite } = useFavorites(initialFavorites);
+
 	const categories = useMemo(
 		() => [...new Set(gradients.map((g) => g.category))],
 		[gradients],
@@ -38,7 +45,7 @@ export function GradientsClient({ gradients }: Props) {
 			{/* Sidebar */}
 			<div className="lg:col-span-1">
 				<Card className="border-slate-700 bg-slate-800/50 p-4">
-					<h2 className="font-semibold text-white mb-4">Categories</h2>
+					<h2 className="font-semibold text-white">Categories</h2>
 					<div className="space-y-2">
 						{categories.map((category) => (
 							<button
@@ -76,10 +83,21 @@ export function GradientsClient({ gradients }: Props) {
 								key={gradient.id}
 								className="overflow-hidden border-slate-700 bg-slate-800/50"
 							>
-								<div
-									className="w-full h-32"
-									style={{ background: gradient.gradientString }}
-								/>
+								<div className="relative">
+									<div
+										className="w-full h-32"
+										style={{ background: gradient.gradientString }}
+									/>
+									<div className="absolute top-2 right-2">
+										<FavoriteButton
+											gradientId={gradient.id}
+											isFavorite={isFavorite(undefined, gradient.id, undefined)}
+											isAuthenticated={isAuthenticated}
+											onToggle={toggleFavorite}
+											className="bg-black/30 hover:bg-black/50"
+										/>
+									</div>
+								</div>
 
 								<div className="p-4 space-y-3">
 									<div>

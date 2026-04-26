@@ -7,12 +7,20 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { createGradient } from "@/lib/actions/admin/gradients/createGradient";
 import { deleteGradient } from "@/lib/actions/admin/gradients/deleteGradient";
 import {
 	type GradientRow,
 	getGradients,
 } from "@/lib/actions/admin/gradients/getGradients";
+import { getCategories } from "@/lib/actions/admin/gradients/getCategories";
 import { updateGradient } from "@/lib/actions/admin/gradients/updateGradient";
 import { useSession } from "@/lib/auth-client";
 
@@ -30,6 +38,7 @@ const EMPTY_FORM = {
 export function AdminGradientsTab() {
 	const { data: session } = useSession();
 	const [gradients, setGradients] = useState<GradientRow[]>([]);
+	const [categories, setCategories] = useState<string[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [formOpen, setFormOpen] = useState(false);
 	const [editingId, setEditingId] = useState<number | null>(null);
@@ -41,6 +50,11 @@ export function AdminGradientsTab() {
 				setIsLoading(true);
 				const result = await getGradients();
 				setGradients(result);
+				const categoriesResult = await getCategories();
+				const categoryNames = categoriesResult
+					.map((cat) => cat.category)
+					.filter((cat): cat is string => !!cat);
+				setCategories(categoryNames);
 				setIsLoading(false);
 			}
 		}
@@ -188,22 +202,38 @@ export function AdminGradientsTab() {
 							/>
 						</div>
 
-						<div>
-							<label
-								htmlFor="category"
-								className="block text-sm font-medium text-slate-300 mb-2"
-							>
-								Category
-							</label>
-							<Input
-								id="category"
-								value={formData.category}
-								onChange={(e) =>
-									setFormData({ ...formData, category: e.target.value })
-								}
-								className="bg-slate-700 border-slate-600 text-white"
-							/>
-						</div>
+					<div>
+						<label
+							htmlFor="category"
+							className="block text-sm font-medium text-slate-300 mb-2"
+						>
+							Category
+						</label>
+						<Input
+							id="category"
+							value={formData.category}
+							onChange={(e) =>
+								setFormData({ ...formData, category: e.target.value })
+							}
+							placeholder="Type a category or select from below"
+							className="bg-slate-700 border-slate-600 text-white mb-2"
+						/>
+						<Select 
+							value={categories.includes(formData.category) ? formData.category : ""} 
+							onValueChange={(value) => setFormData({ ...formData, category: value })}
+						>
+							<SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+								<SelectValue placeholder="Select a category" />
+							</SelectTrigger>
+							<SelectContent className="bg-slate-700 border-slate-600">
+								{categories.map((cat) => (
+									<SelectItem key={cat} value={cat} className="text-white">
+										{cat}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</div>
 
 						<div className="grid grid-cols-2 gap-4">
 							<div>

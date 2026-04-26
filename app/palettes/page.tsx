@@ -15,7 +15,7 @@ export default async function PalettesPage() {
 				</p>
 			</div>
 
-			<p className="text-xl mb-2 font-semibold">Main palettes</p>
+			<p className="text-xl mb-2 font-semibold">Classic palettes</p>
 			<div className="grid grid-cols-3 gap-4 mb-8">
 				{palettes
 					.filter((palette) => palette.category === "main")
@@ -34,7 +34,7 @@ export default async function PalettesPage() {
 											: ""}
 									</p>
 								</CardHeader>
-								<CardContent>
+								<CardContent className="flex justify-start items-end h-full">
 									<Button variant="default" className="w-fit" asChild>
 										<Link href={`/palettes/${palette.slug}`}>View colors</Link>
 									</Button>
@@ -44,7 +44,7 @@ export default async function PalettesPage() {
 					))}
 			</div>
 
-			<p className="text-xl mb-2 font-semibold">Other palettes</p>
+			<p className="text-xl mb-2 font-semibold">Custom palettes</p>
 			<div className="grid grid-cols-3 gap-4">
 				{palettes
 					.filter((palette) => palette.category !== "main")
