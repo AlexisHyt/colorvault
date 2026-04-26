@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { signOut, useSession } from "@/lib/auth-client";
 
@@ -70,9 +71,13 @@ export function Header() {
 									</Button>
 								</Link>
 							)}
-							<span className="text-sm text-slate-400">
-								{session.user.email}
-							</span>
+							<Link
+								href="/account"
+								className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition"
+							>
+								<UserCircle size={16} />
+								{session.user.name || session.user.email}
+							</Link>
 							<Button
 								variant="outline"
 								size="sm"
