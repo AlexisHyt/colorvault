@@ -6,6 +6,7 @@ import { db } from "@/db";
 import * as schema from "@/db/schema";
 import { baseEmail, resend } from "@/lib/emails/resend.config";
 import EmailActivation from "@/lib/emails/templates/EmailActivation";
+import EmailResetPassword from "@/lib/emails/templates/EmailResetPassword";
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
@@ -22,6 +23,16 @@ export const auth = betterAuth({
 	emailAndPassword: {
 		enabled: true,
 		requireEmailVerification: true,
+		sendResetPassword: async ({ user, url, token }, request) => {
+			await resend.emails.send({
+				from: baseEmail,
+				replyTo: baseEmail,
+				to: user.email,
+				subject: "Reset your password",
+				text: `Click on the link to reset your password: ${url}`,
+				// react: jsx(EmailResetPassword, { url }),
+			});
+		},
 		onExistingUserSignUp: async ({ user }, request) => {
 			await resend.emails.send({
 				from: baseEmail,

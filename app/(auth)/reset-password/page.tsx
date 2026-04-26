@@ -1,41 +1,50 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { signIn } from "@/lib/auth-client";
-import { mapAuthErrorToMessage } from "@/lib/auth-errors";
+import { authClient } from "@/lib/auth-client";
 
-export default function SignInPage() {
+function ResetPasswordForm() {
 	const router = useRouter();
-	const [email, setEmail] = useState("");
+	const searchParams = useSearchParams();
+
 	const [password, setPassword] = useState("");
+	const [confirm, setConfirm] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
 
-	const handleSignIn = async (e: React.FormEvent) => {
+	const token = searchParams.get("token") ?? undefined;
+
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setError("");
+
+		if (password !== confirm) {
+			setError("Passwords do not match.");
+			return;
+		}
+
 		setLoading(true);
 
 		try {
-			await signIn.email(
-				{
-					email,
-					password,
-				},
-				{
-					onSuccess: () => {
-						router.push("/");
-					},
-					onError: (ctx) => {
-						setError(mapAuthErrorToMessage(ctx.error, "Failed to sign in"));
-					},
-				},
-			);
+			const { error } = await authClient.resetPassword({
+				newPassword: password,
+				token,
+			});
+
+			if (error) {
+				setError(error.message || "Failed to reset password.");
+			} else {
+				toast.success("Password reset", {
+					description: "Your password has been updated. You can now sign in.",
+				});
+				router.push("/signin");
+			}
 		} catch {
 			setError("An error occurred. Please try again.");
 		} finally {
@@ -48,10 +57,10 @@ export default function SignInPage() {
 			<Card className="w-full max-w-md border-slate-700 bg-slate-900/50 backdrop-blur">
 				<div className="p-8">
 					<div className="mb-8">
-						<h1 className="text-3xl font-bold text-white mb-2">Sign In</h1>
-						<p className="text-slate-400">
-							Access your color palette collection
-						</p>
+						<h1 className="text-3xl font-bold text-white mb-2">
+							Reset password
+						</h1>
+						<p className="text-slate-400">Enter your new password below.</p>
 					</div>
 
 					{error && (
@@ -60,31 +69,13 @@ export default function SignInPage() {
 						</div>
 					)}
 
-					<form onSubmit={handleSignIn} className="space-y-4">
-						<div>
-							<label
-								htmlFor="email"
-								className="block text-sm font-medium text-slate-200 mb-2"
-							>
-								Email
-							</label>
-							<Input
-								id="email"
-								type="email"
-								placeholder="you@example.com"
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								className="bg-slate-800 border-slate-700 text-white placeholder-slate-500"
-								required
-							/>
-						</div>
-
+					<form onSubmit={handleSubmit} className="space-y-4">
 						<div>
 							<label
 								htmlFor="password"
 								className="block text-sm font-medium text-slate-200 mb-2"
 							>
-								Password
+								New password
 							</label>
 							<Input
 								id="password"
@@ -94,16 +85,27 @@ export default function SignInPage() {
 								onChange={(e) => setPassword(e.target.value)}
 								className="bg-slate-800 border-slate-700 text-white placeholder-slate-500"
 								required
+								minLength={8}
 							/>
 						</div>
 
-						<div className="flex justify-end">
-							<Link
-								href="/forgot-password"
-								className="text-sm text-blue-400 hover:text-blue-300"
+						<div>
+							<label
+								htmlFor="confirm"
+								className="block text-sm font-medium text-slate-200 mb-2"
 							>
-								Forgot password?
-							</Link>
+								Confirm new password
+							</label>
+							<Input
+								id="confirm"
+								type="password"
+								placeholder="••••••••"
+								value={confirm}
+								onChange={(e) => setConfirm(e.target.value)}
+								className="bg-slate-800 border-slate-700 text-white placeholder-slate-500"
+								required
+								minLength={8}
+							/>
 						</div>
 
 						<Button
@@ -111,23 +113,31 @@ export default function SignInPage() {
 							className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium"
 							disabled={loading}
 						>
-							{loading ? "Signing in..." : "Sign In"}
+							{loading ? "Resetting..." : "Reset password"}
 						</Button>
 					</form>
 
 					<div className="mt-6 pt-6 border-t border-slate-700">
 						<p className="text-slate-400 text-center text-sm">
-							Don&apos;t have an account?{" "}
+							Remember your password?{" "}
 							<Link
-								href="/signup"
+								href="/signin"
 								className="text-blue-400 hover:text-blue-300 font-medium"
 							>
-								Sign Up
+								Sign In
 							</Link>
 						</p>
 					</div>
 				</div>
 			</Card>
 		</div>
+	);
+}
+
+export default function ResetPasswordPage() {
+	return (
+		<Suspense>
+			<ResetPasswordForm />
+		</Suspense>
 	);
 }
