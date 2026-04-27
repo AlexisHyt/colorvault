@@ -46,6 +46,12 @@ export function Header() {
 						>
 							Gradients
 						</Link>
+						<Link
+							href="/generate"
+							className="text-slate-300 hover:text-white transition"
+						>
+							Generator
+						</Link>
 						{isVerifiedUser && (
 							<Link
 								href="/favorites"
