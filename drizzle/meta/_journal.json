@@ -8,6 +8,27 @@
       "when": 1777161651788,
       "tag": "0000_fast_doctor_octopus",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1777294812877,
+      "tag": "0001_add_user_saved_generated_palette",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777317816106,
+      "tag": "0002_add_name_to_palette_saved",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1777318033924,
+      "tag": "0003_make_name_unique_in_saved_palette",
+      "breakpoints": true
     }
   ]
 }

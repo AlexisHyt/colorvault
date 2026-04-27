@@ -20,3 +20,4 @@ node_modules
 .vscode
 
 db/database.*
+drizzle/meta/*

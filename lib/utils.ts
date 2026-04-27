@@ -1,4 +1,5 @@
 import { oklchaToRgba } from "chromakit-react";
+import chroma from "chroma-js";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -9,6 +10,11 @@ export function oklchaToHex(color: string): string {
 	const g = Math.round(rgba.g).toString(16).padStart(2, "0");
 	const b = Math.round(rgba.b).toString(16).padStart(2, "0");
 	return `#${r}${g}${b}`.toUpperCase();
+}
+
+export function hexToOklchaStr(hex: string): string {
+	const [L, C, h] = chroma(hex).oklch();
+	return `oklcha(${L.toFixed(4)}, ${C.toFixed(4)}, ${Number.isNaN(h) ? 0 : h.toFixed(4)}, 1)`;
 }
 
 export function oklchaToRgbStr(color: string): string {

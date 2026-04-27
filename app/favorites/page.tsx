@@ -1,5 +1,6 @@
 import { Heart } from 'lucide-react';
 import { getFavoritesWithDetails } from '@/lib/actions/favorites';
+import { getSavedPalettes } from '@/lib/actions/saved-palettes';
 import { getVerifiedSession } from '@/lib/auth-utils';
 import { FavoritesClient } from '@/components/favorites-client';
 
@@ -19,7 +20,10 @@ export default async function FavoritesPage() {
     );
   }
 
-  const items = await getFavoritesWithDetails(session.user.id);
+  const [items, savedPalettes] = await Promise.all([
+    getFavoritesWithDetails(session.user.id),
+    getSavedPalettes(session.user.id),
+  ]);
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -31,7 +35,7 @@ export default async function FavoritesPage() {
         <p className="text-slate-400">Your saved colors and gradients</p>
       </div>
 
-      <FavoritesClient items={items} />
+      <FavoritesClient items={items} savedPalettes={savedPalettes} />
     </main>
   );
 }

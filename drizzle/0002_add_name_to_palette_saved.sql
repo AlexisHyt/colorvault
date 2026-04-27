@@ -1,0 +1,1 @@
+ALTER TABLE "user_palette_saved" ADD COLUMN "name" text NOT NULL;

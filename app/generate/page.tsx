@@ -1,4 +1,6 @@
 import { GeneratePaletteClient } from "@/components/generate-palette-client";
+import { getSavedPalettes } from "@/lib/actions/saved-palettes";
+import { getVerifiedSession } from "@/lib/auth-utils";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,7 +9,10 @@ export const metadata: Metadata = {
     "Generate a complete color palette for your website (primary, secondary, accent, neutral) and export it as CSS, Tailwind, SCSS or Figma Tokens.",
 };
 
-export default function GeneratePage() {
+export default async function GeneratePage() {
+  const session = await getVerifiedSession();
+  const savedPalettes = session?.user ? await getSavedPalettes(session.user.id) : [];
+
   return (
     <main className="container mx-auto px-4 py-10">
       <div className="mb-10">
@@ -19,8 +24,7 @@ export default function GeneratePage() {
         </p>
       </div>
 
-      <GeneratePaletteClient />
+      <GeneratePaletteClient isAuthenticated={!!session?.user} savedPalettes={savedPalettes} />
     </main>
   );
 }
-

@@ -140,6 +140,19 @@ export const userFavorite = pgTable(
 	},
 );
 
+export const userPaletteSaved = pgTable("user_palette_saved", {
+	id: serial("id").primaryKey(),
+	userId: text("userId")
+		.notNull()
+		.references(() => user.id),
+	name: text("name").notNull().unique(),
+	primaryColor: text("primaryColor").notNull(),
+	secondaryColor: text("secondaryColor").notNull(),
+	accentColor: text("accentColor").notNull(),
+	neutralColor: text("neutralColor").notNull(),
+	createdAt: text("createdAt").notNull().default("now"),
+});
+
 /*Relations*/
 export const colorPaletteRelations = relations(colorPalette, ({ many }) => ({
 	rows: many(rowPalette),
