@@ -20,5 +20,5 @@ ENV NODE_ENV=production
 
 COPY --from=builder /app ./
 
-EXPOSE 3004
-CMD ["pnpm", "start", "--", "--port", "3005"]
+EXPOSE 3005
+CMD ["pnpm", "start", "--port", "3005"]
