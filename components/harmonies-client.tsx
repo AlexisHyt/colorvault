@@ -13,28 +13,28 @@ import { computeHarmony, type HarmonyMode } from "@/lib/generate-palette";
 const MODES: { value: HarmonyMode; label: string; description: string }[] = [
 	{
 		value: "complementary",
-		label: "Complémentaire",
-		description: "2 couleurs opposées sur la roue (+180°).",
+		label: "Complementary",
+		description: "2 opposite colors on the wheel (+180°).",
 	},
 	{
 		value: "triadic",
-		label: "Triadique",
-		description: "3 couleurs équidistantes (+120°, +240°).",
+		label: "Triadic",
+		description: "3 evenly spaced colors (+120°, +240°).",
 	},
 	{
 		value: "analogous",
-		label: "Analogue",
-		description: "3 couleurs voisines (±30°).",
+		label: "Analogous",
+		description: "3 adjacent colors (±30°).",
 	},
 	{
 		value: "split-complementary",
-		label: "Split-complémentaire",
-		description: "Base + 2 couleurs adjacentes au complément (+150°, +210°).",
+		label: "Split-complementary",
+		description: "Base + 2 colors adjacent to the complement (+150°, +210°).",
 	},
 	{
 		value: "tetradic",
-		label: "Tétradique",
-		description: "4 couleurs en rectangle sur la roue (+90°, +180°, +270°).",
+		label: "Tetradic",
+		description: "4 colors in a rectangle on the wheel (+90°, +180°, +270°).",
 	},
 ];
 
@@ -61,7 +61,7 @@ export function HarmoniesClient() {
 		<div className="flex flex-col gap-10">
 			{/* ── Color input ── */}
 			<div className="flex flex-col gap-2 max-w-xs">
-				<Label className="text-white font-semibold">Couleur de base</Label>
+				<Label className="text-white font-semibold">Base color</Label>
 				<div className="flex items-center gap-3">
 					<input
 						type="color"
@@ -125,7 +125,7 @@ export function HarmoniesClient() {
 					<h2 className="text-lg font-semibold text-white">
 						{currentMode.label}
 						<span className="ml-2 text-sm font-normal text-slate-400">
-							— {colors.length} couleur{colors.length > 1 ? "s" : ""}
+							— {colors.length} color{colors.length > 1 ? "s" : ""}
 						</span>
 					</h2>
 					<HarmonySwatchList colors={colors} />
