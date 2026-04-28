@@ -4,6 +4,7 @@ import { Eye, EyeOff, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { ColorInput } from "@/components/generate/ColorInput";
 import { ExportDialog } from "@/components/generate/ExportDialog";
+import { ImageColorPickerButton } from "@/components/generate/ImageColorPickerButton";
 import { LoadPaletteButton } from "@/components/generate/LoadPaletteButton";
 import { PalettePreview } from "@/components/generate/PalettePreview";
 import { PaletteRow } from "@/components/generate/PaletteRow";
@@ -135,19 +136,36 @@ export function GeneratePaletteClient({
 				<div className="flex flex-col lg:flex-row gap-8">
 					{/* Left: vertical color inputs */}
 					<div className="flex flex-col gap-5 lg:w-72 shrink-0">
-						<div className="flex items-center gap-2">
-							<LoadPaletteButton
-								savedPalettes={savedPalettesList}
-								isAuthenticated={isAuthenticated}
-								onLoad={(p) => {
-									loadPalette(p);
-								}}
-							/>
+						<div className="flex flex-col gap-2">
+							<div className="flex justify-between items-center gap-2 w-full">
+								<div className="w-full">
+									<LoadPaletteButton
+										savedPalettes={savedPalettesList}
+										isAuthenticated={isAuthenticated}
+										onLoad={(p) => {
+											loadPalette(p);
+										}}
+									/>
+								</div>
+								<div className="w-full">
+									<ImageColorPickerButton
+										onExtract={(colors) => {
+											setBaseColor(colors.primary);
+											setManualOverrides({
+												secondary: true,
+												accent: true,
+												other: true,
+											});
+											setColorInputs(colors);
+										}}
+									/>
+								</div>
+							</div>
 							<Button
 								variant="secondary"
 								size="sm"
 								onClick={randomize}
-								className="gap-2 w-fit"
+								className="gap-2"
 							>
 								<RefreshCw className="w-4 h-4" />
 								Randomize
@@ -170,13 +188,13 @@ export function GeneratePaletteClient({
 							),
 						)}
 
-						<div className="flex items-center justify-end gap-2 pt-1">
+						<div className="flex items-center justify-start gap-2 pt-1">
+							<ExportDialog palette={palette} />
 							<SavePaletteButton
 								colorInputs={colorInputs}
 								isAuthenticated={isAuthenticated}
 								onSaved={(p) => setSavedPalettesList((prev) => [...prev, p])}
 							/>
-							<ExportDialog palette={palette} />
 						</div>
 					</div>
 

@@ -27,11 +27,7 @@ export function LoadPaletteButton({
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button
-					variant="secondary"
-					size="sm"
-					className="gap-2 h-8 px-3 text-xs"
-				>
+				<Button variant="secondary" size="sm" className="gap-2 w-full">
 					<FolderOpen className="w-3.5 h-3.5" />
 					Load saved
 				</Button>
