@@ -1,3 +1,19 @@
+"use client";
+
+import { Eye } from "lucide-react";
+import { useState } from "react";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import {
+	COLORBLIND_LABELS,
+	type ColorblindType,
+	simulateColorblind,
+} from "@/lib/generate/colorblind";
 import { luminance } from "@/lib/generate/luminance";
 import { textOn } from "@/lib/generate/textOn";
 import type { ColorRole } from "@/lib/generate-palette";
@@ -7,10 +23,14 @@ export function PalettePreview({
 }: {
 	colors: Record<ColorRole, string>;
 }) {
-	const primary = colors.primary;
-	const secondary = colors.secondary;
-	const accent = colors.accent;
-	const neutral = colors.other;
+	const [cbMode, setCbMode] = useState<ColorblindType>("normal");
+
+	const sim = (hex: string) => simulateColorblind(hex, cbMode);
+
+	const primary = sim(colors.primary);
+	const secondary = sim(colors.secondary);
+	const accent = sim(colors.accent);
+	const neutral = sim(colors.other);
 
 	const textOnPrimary = textOn(primary);
 	const textOnSecondary = textOn(secondary);
@@ -35,6 +55,24 @@ export function PalettePreview({
 				<div className="flex-1 mx-2 h-5 bg-slate-700/60 rounded text-xs text-slate-500 flex items-center px-2 font-mono">
 					yoursite.com
 				</div>
+				<Select
+					value={cbMode}
+					onValueChange={(v) => setCbMode(v as ColorblindType)}
+				>
+					<SelectTrigger className="h-6 w-auto min-w-[140px] rounded border-slate-600 bg-slate-700/60 text-[11px] text-slate-300 gap-1 px-2">
+						<Eye className="w-3 h-3 shrink-0 text-slate-400" />
+						<SelectValue />
+					</SelectTrigger>
+					<SelectContent className="border-slate-700 bg-slate-800 text-slate-200 text-xs">
+						{(
+							Object.entries(COLORBLIND_LABELS) as [ColorblindType, string][]
+						).map(([value, label]) => (
+							<SelectItem key={value} value={value} className="text-xs">
+								{label}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
 			</div>
 
 			{/* Navbar */}

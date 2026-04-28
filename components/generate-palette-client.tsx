@@ -1,6 +1,6 @@
 "use client";
 
-import { RefreshCw } from "lucide-react";
+import { Eye, EyeOff, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { ColorInput } from "@/components/generate/ColorInput";
 import { ExportDialog } from "@/components/generate/ExportDialog";
@@ -8,6 +8,7 @@ import { LoadPaletteButton } from "@/components/generate/LoadPaletteButton";
 import { PalettePreview } from "@/components/generate/PalettePreview";
 import { PaletteRow } from "@/components/generate/PaletteRow";
 import { SavePaletteButton } from "@/components/generate/SavePaletteButton";
+import { WcagPanel } from "@/components/generate/WcagPanel";
 import { Button } from "@/components/ui/button";
 import type { SavedPalette } from "@/lib/actions/saved-palettes";
 import {
@@ -50,6 +51,7 @@ export function GeneratePaletteClient({
 			...deriveHarmonies(DEFAULT_PRIMARY),
 		}),
 	);
+	const [wcagOpen, setWcagOpen] = useState(false);
 
 	const handlePrimaryChange = useCallback(
 		(hex: string) => {
@@ -206,6 +208,24 @@ export function GeneratePaletteClient({
 
 			{/* Palette scales */}
 			<div className="space-y-8">
+				<div className="flex items-center justify-between">
+					<p className="text-slate-400 text-xs uppercase tracking-widest font-semibold">
+						Scales
+					</p>
+					<Button
+						variant="ghost"
+						size="sm"
+						onClick={() => setWcagOpen((v) => !v)}
+						className="gap-2 text-xs text-slate-400 hover:text-white"
+					>
+						{wcagOpen ? (
+							<EyeOff className="w-3.5 h-3.5" />
+						) : (
+							<Eye className="w-3.5 h-3.5" />
+						)}
+						{wcagOpen ? "Hide" : "Show"} WCAG accessibility
+					</Button>
+				</div>
 				{(["primary", "secondary", "accent", "other"] as ColorRole[]).map(
 					(role) => (
 						<div
@@ -213,6 +233,7 @@ export function GeneratePaletteClient({
 							className="bg-slate-800/40 border border-slate-700 rounded-2xl p-6"
 						>
 							<PaletteRow role={role} scale={palette[role]} />
+							{wcagOpen && <WcagPanel scale={palette[role]} />}
 						</div>
 					),
 				)}
