@@ -52,6 +52,12 @@ export function Header() {
 						>
 							Generator
 						</Link>
+						<Link
+							href="/harmonies"
+							className="text-slate-300 hover:text-white transition"
+						>
+							Harmonies
+						</Link>
 						{isVerifiedUser && (
 							<Link
 								href="/favorites"

@@ -54,6 +54,72 @@ export function deriveHarmonies(
 	};
 }
 
+// ── Color Harmonies ────────────────────────────────────────────────────────
+
+export type HarmonyMode =
+	| "complementary"
+	| "triadic"
+	| "analogous"
+	| "split-complementary"
+	| "tetradic"
+	| "square";
+
+export interface HarmonyColor {
+	label: string;
+	hex: string;
+	angleDeg: number;
+}
+
+/**
+ * Returns the list of harmony colors (including the base) for a given mode.
+ * Angles are the HSL hue values used to position markers on the color wheel.
+ */
+export function computeHarmony(
+	primaryHex: string,
+	mode: HarmonyMode,
+): HarmonyColor[] {
+	const base = chroma(primaryHex);
+	const [h, s, l] = base.hsl();
+	const hue = Number.isNaN(h) ? 0 : h;
+
+	const make = (label: string, deg: number): HarmonyColor => ({
+		label,
+		hex: chroma.hsl(deg % 360, s, l).hex(),
+		angleDeg: deg % 360,
+	});
+
+	const base0: HarmonyColor = { label: "Base", hex: primaryHex, angleDeg: hue };
+
+	switch (mode) {
+		case "complementary":
+			return [base0, make("Complement", hue + 180)];
+		case "triadic":
+			return [base0, make("Triad 2", hue + 120), make("Triad 3", hue + 240)];
+		case "analogous":
+			return [
+				make("Analogous −", hue - 30),
+				base0,
+				make("Analogous +", hue + 30),
+			];
+		case "split-complementary":
+			return [base0, make("Split 1", hue + 150), make("Split 2", hue + 210)];
+		case "tetradic":
+			return [
+				base0,
+				make("Tetrad 2", hue + 90),
+				make("Tetrad 3", hue + 180),
+				make("Tetrad 4", hue + 270),
+			];
+		case "square":
+			return [
+				base0,
+				make("Square 2", hue + 90),
+				make("Square 3", hue + 180),
+				make("Square 4", hue + 270),
+			];
+	}
+}
+
 /** Generates the full palette from base colors */
 export function generateWebPalette(
 	colors: Record<ColorRole, string>,
