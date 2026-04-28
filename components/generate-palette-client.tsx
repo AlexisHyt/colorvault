@@ -138,15 +138,17 @@ export function GeneratePaletteClient({
 					<div className="flex flex-col gap-5 lg:w-72 shrink-0">
 						<div className="flex flex-col gap-2">
 							<div className="flex justify-between items-center gap-2 w-full">
-								<div className="w-full">
-									<LoadPaletteButton
-										savedPalettes={savedPalettesList}
-										isAuthenticated={isAuthenticated}
-										onLoad={(p) => {
-											loadPalette(p);
-										}}
-									/>
-								</div>
+								{isAuthenticated && (
+									<div className="w-full">
+										<LoadPaletteButton
+											savedPalettes={savedPalettesList}
+											isAuthenticated={isAuthenticated}
+											onLoad={(p) => {
+												loadPalette(p);
+											}}
+										/>
+									</div>
+								)}
 								<div className="w-full">
 									<ImageColorPickerButton
 										onExtract={(colors) => {
