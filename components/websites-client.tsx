@@ -6,7 +6,7 @@ import { FavoriteButton } from "@/components/FavoriteButton";
 import { Card } from "@/components/ui/card";
 import { useFavorites } from "@/hooks/use-favorites";
 import type { RawFavorite } from "@/lib/actions/favorites";
-import type { WebsiteColor } from "@/lib/actions/website-colors";
+import type { WebsiteColor } from "@/lib/types";
 import { oklchaToHex } from "@/lib/utils";
 
 interface Props {
