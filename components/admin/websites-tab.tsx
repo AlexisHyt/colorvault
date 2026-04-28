@@ -7,30 +7,20 @@ import { WebsiteEditFormDialog } from "@/components/admin/websites/WebsiteEditFo
 import { WebsitesAddFormDialog } from "@/components/admin/websites/WebsitesAddFormDialog";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { useAdminData } from "@/hooks/use-admin-data";
 import { deleteWebsite } from "@/lib/actions/admin/websites/deleteWebsite";
 import { getWebsites } from "@/lib/actions/admin/websites/getWebsites";
-import { useSession } from "@/lib/auth-client";
 import type { WebsiteColor } from "@/lib/types";
 import { oklchaToHex } from "@/lib/utils";
 
 export function AdminWebsitesTab() {
-	const { data: session } = useSession();
 	const [websites, setWebsites] = useState<WebsiteColor[]>([]);
-	const [isLoading, setIsLoading] = useState(false);
+
+	const { data, isLoading } = useAdminData(getWebsites);
 
 	useEffect(() => {
-		async function loadData() {
-			if (session?.user && session.user.role === "admin") {
-				setIsLoading(true);
-
-				const result = await getWebsites();
-				setWebsites(result);
-
-				setIsLoading(false);
-			}
-		}
-		loadData();
-	}, [session]);
+		if (data) setWebsites(data);
+	}, [data]);
 
 	const handleDelete = async (id: number) => {
 		const result = await deleteWebsite(id);

@@ -1,7 +1,7 @@
 "use client";
 
 import { Edit2, Plus, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -14,6 +14,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
+import { useAdminData } from "@/hooks/use-admin-data";
 import { createGradient } from "@/lib/actions/admin/gradients/createGradient";
 import { deleteGradient } from "@/lib/actions/admin/gradients/deleteGradient";
 import { getCategories } from "@/lib/actions/admin/gradients/getCategories";
@@ -22,7 +23,6 @@ import {
 	getGradients,
 } from "@/lib/actions/admin/gradients/getGradients";
 import { updateGradient } from "@/lib/actions/admin/gradients/updateGradient";
-import { useSession } from "@/lib/auth-client";
 
 const EMPTY_FORM = {
 	name: "",
@@ -36,30 +36,33 @@ const EMPTY_FORM = {
 };
 
 export function AdminGradientsTab() {
-	const { data: session } = useSession();
 	const [gradients, setGradients] = useState<GradientRow[]>([]);
 	const [categories, setCategories] = useState<string[]>([]);
-	const [isLoading, setIsLoading] = useState(false);
 	const [formOpen, setFormOpen] = useState(false);
 	const [editingId, setEditingId] = useState<number | null>(null);
 	const [formData, setFormData] = useState(EMPTY_FORM);
 
+	const loader = useCallback(async () => {
+		const [gradientsResult, categoriesResult] = await Promise.all([
+			getGradients(),
+			getCategories(),
+		]);
+		return {
+			gradients: gradientsResult,
+			categories: categoriesResult
+				.map((cat) => cat.category)
+				.filter((cat): cat is string => !!cat),
+		};
+	}, []);
+
+	const { data, isLoading } = useAdminData(loader);
+
 	useEffect(() => {
-		async function loadData() {
-			if (session?.user && session.user.role === "admin") {
-				setIsLoading(true);
-				const result = await getGradients();
-				setGradients(result);
-				const categoriesResult = await getCategories();
-				const categoryNames = categoriesResult
-					.map((cat) => cat.category)
-					.filter((cat): cat is string => !!cat);
-				setCategories(categoryNames);
-				setIsLoading(false);
-			}
+		if (data) {
+			setGradients(data.gradients);
+			setCategories(data.categories);
 		}
-		loadData();
-	}, [session]);
+	}, [data]);
 
 	const updateGradientString = (
 		start: string,

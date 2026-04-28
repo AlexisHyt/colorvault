@@ -21,31 +21,21 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAdminData } from "@/hooks/use-admin-data";
 import { deletePalette } from "@/lib/actions/admin/palette/deletePalette";
 import { getPalettes } from "@/lib/actions/admin/palette/getPalettes";
 import { reorderPaletteColor } from "@/lib/actions/admin/palette/reorderPaletteColor";
 import { reorderPaletteRow } from "@/lib/actions/admin/palette/reorderPaletteRow";
-import { useSession } from "@/lib/auth-client";
 import type { ColorPaletteWithColors } from "@/lib/types";
 
 export function AdminPalettesTab() {
-	const { data: session } = useSession();
 	const [palettes, setPalettes] = useState<ColorPaletteWithColors[]>([]);
-	const [isLoading, setIsLoading] = useState(false);
+
+	const { data, isLoading } = useAdminData(getPalettes);
 
 	useEffect(() => {
-		async function loadData() {
-			if (session?.user && session.user.role === "admin") {
-				setIsLoading(true);
-
-				const result = await getPalettes();
-				setPalettes(result);
-
-				setIsLoading(false);
-			}
-		}
-		loadData();
-	}, [session]);
+		if (data) setPalettes(data);
+	}, [data]);
 
 	const addPalettesRows = (palettes: ColorPaletteWithColors[]) => {
 		setPalettes((prevPalettes) => [...prevPalettes, ...palettes]);

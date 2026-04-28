@@ -3,9 +3,13 @@ import { oklchaToRgba } from "chromakit-react";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+/** Helper interne : parse une chaîne oklcha puis la convertit en RGBA. */
+function toRgba(color: string) {
+	return oklchaToRgba(oklchaStrToObj(color));
+}
+
 export function oklchaToHex(color: string): string {
-	const parsed = oklchaStrToObj(color);
-	const rgba = oklchaToRgba(parsed);
+	const rgba = toRgba(color);
 	const r = Math.round(rgba.r).toString(16).padStart(2, "0");
 	const g = Math.round(rgba.g).toString(16).padStart(2, "0");
 	const b = Math.round(rgba.b).toString(16).padStart(2, "0");
@@ -18,14 +22,12 @@ export function hexToOklchaStr(hex: string): string {
 }
 
 export function oklchaToRgbStr(color: string): string {
-	const parsed = oklchaStrToObj(color);
-	const rgba = oklchaToRgba(parsed);
+	const rgba = toRgba(color);
 	return `rgb(${Math.round(rgba.r)}, ${Math.round(rgba.g)}, ${Math.round(rgba.b)})`;
 }
 
 export function oklchaToHslStr(color: string): string {
-	const parsed = oklchaStrToObj(color);
-	const rgba = oklchaToRgba(parsed);
+	const rgba = toRgba(color);
 	const r = rgba.r / 255;
 	const g = rgba.g / 255;
 	const b = rgba.b / 255;
@@ -80,8 +82,7 @@ export function oklchaStrToObj(color: string) {
 }
 
 export function oklchaToRgbaStr(color: string) {
-	const parsed = oklchaStrToObj(color);
-	const rgba = oklchaToRgba(parsed);
+	const rgba = toRgba(color);
 
 	return `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
 }
