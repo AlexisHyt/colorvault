@@ -14,10 +14,10 @@
  *   node scripts/insert-websites.mjs --clear   → wipe then re-insert
  */
 
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import postgres from "postgres";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
 
 // ---------------------------------------------------------------------------
 // Helpers

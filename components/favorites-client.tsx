@@ -7,7 +7,10 @@ import { FavoriteButton } from "@/components/FavoriteButton";
 import { Card } from "@/components/ui/card";
 import { useFavorites } from "@/hooks/use-favorites";
 import type { FavoriteItem } from "@/lib/actions/favorites";
-import { deleteSavedPalette, type SavedPalette } from "@/lib/actions/saved-palettes";
+import {
+	deleteSavedPalette,
+	type SavedPalette,
+} from "@/lib/actions/saved-palettes";
 import { oklchaToHex, oklchaToRgbaStr } from "@/lib/utils";
 
 interface Props {
@@ -15,7 +18,10 @@ interface Props {
 	savedPalettes: SavedPalette[];
 }
 
-export function FavoritesClient({ items, savedPalettes: initialSavedPalettes }: Props) {
+export function FavoritesClient({
+	items,
+	savedPalettes: initialSavedPalettes,
+}: Props) {
 	const [savedPalettes, setSavedPalettes] = useState(initialSavedPalettes);
 
 	const seedFavorites = items.map((item) => ({
@@ -141,7 +147,10 @@ export function FavoritesClient({ items, savedPalettes: initialSavedPalettes }: 
 									key={item.favoriteId}
 									className="overflow-hidden border-slate-700 bg-slate-800/50"
 								>
-									<div className="w-full h-12" style={{ backgroundColor: rgba }} />
+									<div
+										className="w-full h-12"
+										style={{ backgroundColor: rgba }}
+									/>
 									<div className="p-4 space-y-2">
 										<div className="flex items-center justify-between">
 											<h3 className="font-semibold text-white">{item.name}</h3>
@@ -176,7 +185,10 @@ export function FavoritesClient({ items, savedPalettes: initialSavedPalettes }: 
 									className="overflow-hidden border-slate-700 bg-slate-800/50"
 								>
 									<div className="relative">
-										<div className="w-full h-32" style={{ background: item.gradientString }} />
+										<div
+											className="w-full h-32"
+											style={{ background: item.gradientString }}
+										/>
 										<div className="absolute top-2 right-2">
 											<FavoriteButton
 												gradientId={item.id}
@@ -188,20 +200,31 @@ export function FavoritesClient({ items, savedPalettes: initialSavedPalettes }: 
 										</div>
 									</div>
 									<div className="p-4">
-										<h3 className="font-semibold text-white mb-2">{item.name}</h3>
+										<h3 className="font-semibold text-white mb-2">
+											{item.name}
+										</h3>
 										<div className="space-y-2">
 											<div className="flex items-center gap-2">
-												<div className="w-6 h-6 rounded border border-slate-600 shrink-0" style={{ backgroundColor: item.colorStart }} />
+												<div
+													className="w-6 h-6 rounded border border-slate-600 shrink-0"
+													style={{ backgroundColor: item.colorStart }}
+												/>
 												<CopyButton value={item.colorStart} label="Start" />
 											</div>
 											{item.colorMid && (
 												<div className="flex items-center gap-2">
-													<div className="w-6 h-6 rounded border border-slate-600 shrink-0" style={{ backgroundColor: item.colorMid }} />
+													<div
+														className="w-6 h-6 rounded border border-slate-600 shrink-0"
+														style={{ backgroundColor: item.colorMid }}
+													/>
 													<CopyButton value={item.colorMid} label="Mid" />
 												</div>
 											)}
 											<div className="flex items-center gap-2">
-												<div className="w-6 h-6 rounded border border-slate-600 shrink-0" style={{ backgroundColor: item.colorEnd }} />
+												<div
+													className="w-6 h-6 rounded border border-slate-600 shrink-0"
+													style={{ backgroundColor: item.colorEnd }}
+												/>
 												<CopyButton value={item.colorEnd} label="End" />
 											</div>
 										</div>
@@ -229,7 +252,9 @@ export function FavoritesClient({ items, savedPalettes: initialSavedPalettes }: 
 								>
 									<div className="p-4">
 										<div className="flex items-start justify-between mb-3">
-											<h3 className="font-semibold text-white">{item.websiteName}</h3>
+											<h3 className="font-semibold text-white">
+												{item.websiteName}
+											</h3>
 											<FavoriteButton
 												websiteColorId={item.id}
 												isFavorite={isFavorite(undefined, undefined, item.id)}
@@ -238,23 +263,49 @@ export function FavoritesClient({ items, savedPalettes: initialSavedPalettes }: 
 											/>
 										</div>
 										{item.description && (
-											<p className="text-xs text-slate-400 mb-3">{item.description}</p>
+											<p className="text-xs text-slate-400 mb-3">
+												{item.description}
+											</p>
 										)}
 										<div className="space-y-2">
 											<div className="flex items-center gap-2">
-												<div className="w-6 h-6 rounded border border-slate-600 shrink-0" style={{ backgroundColor: oklchaToHex(item.primaryColor) }} />
-												<CopyButton value={oklchaToHex(item.primaryColor)} label="Primary" />
+												<div
+													className="w-6 h-6 rounded border border-slate-600 shrink-0"
+													style={{
+														backgroundColor: oklchaToHex(item.primaryColor),
+													}}
+												/>
+												<CopyButton
+													value={oklchaToHex(item.primaryColor)}
+													label="Primary"
+												/>
 											</div>
 											{item.secondaryColor && (
 												<div className="flex items-center gap-2">
-													<div className="w-6 h-6 rounded border border-slate-600 shrink-0" style={{ backgroundColor: oklchaToHex(item.secondaryColor) }} />
-													<CopyButton value={oklchaToHex(item.secondaryColor)} label="Secondary" />
+													<div
+														className="w-6 h-6 rounded border border-slate-600 shrink-0"
+														style={{
+															backgroundColor: oklchaToHex(item.secondaryColor),
+														}}
+													/>
+													<CopyButton
+														value={oklchaToHex(item.secondaryColor)}
+														label="Secondary"
+													/>
 												</div>
 											)}
 											{item.accentColor && (
 												<div className="flex items-center gap-2">
-													<div className="w-6 h-6 rounded border border-slate-600 shrink-0" style={{ backgroundColor: oklchaToHex(item.accentColor) }} />
-													<CopyButton value={oklchaToHex(item.accentColor)} label="Accent" />
+													<div
+														className="w-6 h-6 rounded border border-slate-600 shrink-0"
+														style={{
+															backgroundColor: oklchaToHex(item.accentColor),
+														}}
+													/>
+													<CopyButton
+														value={oklchaToHex(item.accentColor)}
+														label="Accent"
+													/>
 												</div>
 											)}
 										</div>

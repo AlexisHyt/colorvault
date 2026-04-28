@@ -1,8 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ColorPicker, useDebounce } from "chromakit-react";
-import { LucidePlus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ColorPicker } from "chromakit-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import type { z } from "zod";
@@ -17,13 +16,12 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { addPaletteColor } from "@/lib/actions/admin/palette/addPaletteColor";
 import { PaletteAddColorSchema } from "@/lib/schema/PaletteAddColorSchema";
 import type { Color, ColorPaletteWithColors } from "@/lib/types";
 import "chromakit-react/chromakit.css";
 import { deletePaletteColor } from "@/lib/actions/admin/palette/deletePaletteColor";
 import { updatePaletteColor } from "@/lib/actions/admin/palette/updatePaletteColor";
-import { oklchaStrToObj, oklchaToRgbaStr } from "@/lib/utils";
+import { oklchaToRgbaStr } from "@/lib/utils";
 
 interface Props {
 	color: Pick<Color, "id" | "name" | "color">;

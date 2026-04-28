@@ -37,4 +37,3 @@ export async function updateWebsite({
 
 	return await getWebsites();
 }
-

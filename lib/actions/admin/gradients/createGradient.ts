@@ -34,4 +34,3 @@ export async function createGradient(params: CreateGradientParams) {
 
 	return created;
 }
-

@@ -16,7 +16,7 @@ export async function addPaletteRow(paletteId: number, name: string) {
 
 	await db.insert(rowPalette).values({
 		paletteId: paletteId,
-    name: name,
+		name: name,
 		position: newPosition,
 	});
 

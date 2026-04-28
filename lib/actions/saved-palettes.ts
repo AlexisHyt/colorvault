@@ -8,7 +8,9 @@ import { hexToOklchaStr } from "@/lib/utils";
 
 export type SavedPalette = typeof userPaletteSaved.$inferSelect;
 
-export async function getSavedPalettes(userId: string): Promise<SavedPalette[]> {
+export async function getSavedPalettes(
+	userId: string,
+): Promise<SavedPalette[]> {
 	return db
 		.select()
 		.from(userPaletteSaved)
@@ -65,4 +67,3 @@ export async function deleteSavedPalette(
 		);
 	return { success: true };
 }
-

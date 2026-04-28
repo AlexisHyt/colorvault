@@ -63,7 +63,8 @@ export default function EmailResetPassword({ url }: EmailResetPasswordProps) {
 							color: "#94a3b8",
 						}}
 					>
-						Click the button below to set a new password for your ColorVault account.
+						Click the button below to set a new password for your ColorVault
+						account.
 					</p>
 				</div>
 
@@ -111,11 +112,11 @@ export default function EmailResetPassword({ url }: EmailResetPasswordProps) {
 							color: "#64748b",
 						}}
 					>
-						If you did not request a password reset, you can safely ignore this email.
+						If you did not request a password reset, you can safely ignore this
+						email.
 					</p>
 				</div>
 			</div>
 		</div>
 	);
 }
-

@@ -44,4 +44,3 @@ export async function reorderPaletteColor(
 
 	return await getPalettes();
 }
-

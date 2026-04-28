@@ -12,4 +12,3 @@ export async function getGradients() {
 }
 
 export type GradientRow = Awaited<ReturnType<typeof getGradients>>[number];
-

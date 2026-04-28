@@ -15,7 +15,6 @@ export async function DELETE(
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-
 		const userId = session.user.id;
 
 		const { id } = await params;

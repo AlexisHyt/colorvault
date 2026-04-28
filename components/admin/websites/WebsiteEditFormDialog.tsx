@@ -31,7 +31,9 @@ interface Props {
 
 export function WebsiteEditFormDialog({ website, update }: Props) {
 	const [open, setOpen] = useState(false);
-	const [hasSecondary, setHasSecondary] = useState(Boolean(website.secondaryColor));
+	const [hasSecondary, setHasSecondary] = useState(
+		Boolean(website.secondaryColor),
+	);
 	const [hasAccent, setHasAccent] = useState(Boolean(website.accentColor));
 
 	const { register, handleSubmit, setValue, watch } = useForm({
@@ -71,7 +73,11 @@ export function WebsiteEditFormDialog({ website, update }: Props) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button variant="ghost" className="cursor-pointer" onClick={() => setOpen(true)}>
+				<Button
+					variant="ghost"
+					className="cursor-pointer"
+					onClick={() => setOpen(true)}
+				>
 					<LucidePencil />
 				</Button>
 			</DialogTrigger>
@@ -149,7 +155,9 @@ export function WebsiteEditFormDialog({ website, update }: Props) {
 					</div>
 					{hasAccent && (
 						<ColorPicker
-							defaultValue={oklchaToRgbaStr(website.accentColor ?? website.primaryColor)}
+							defaultValue={oklchaToRgbaStr(
+								website.accentColor ?? website.primaryColor,
+							)}
 							formats={[]}
 							showCopyButton={false}
 							showPresets={false}
@@ -178,4 +186,3 @@ export function WebsiteEditFormDialog({ website, update }: Props) {
 		</Dialog>
 	);
 }
-

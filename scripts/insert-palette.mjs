@@ -32,10 +32,10 @@
  * }
  */
 
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import postgres from "postgres";
-import { fileURLToPath } from "url";
 
 // ---------------------------------------------------------------------------
 // Helpers

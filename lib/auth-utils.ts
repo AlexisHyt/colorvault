@@ -14,7 +14,7 @@ export async function getVerifiedSession() {
 		headers: await headers(),
 	});
 
-	if (!session?.user || !session.user.emailVerified) {
+	if (!session?.user?.emailVerified) {
 		return null;
 	}
 
@@ -38,4 +38,3 @@ export async function requireVerifiedSession(redirectPath = "/signin") {
 
 	return session;
 }
-

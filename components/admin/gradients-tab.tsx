@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
 import {
 	Select,
 	SelectContent,
@@ -14,13 +13,14 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import { createGradient } from "@/lib/actions/admin/gradients/createGradient";
 import { deleteGradient } from "@/lib/actions/admin/gradients/deleteGradient";
+import { getCategories } from "@/lib/actions/admin/gradients/getCategories";
 import {
 	type GradientRow,
 	getGradients,
 } from "@/lib/actions/admin/gradients/getGradients";
-import { getCategories } from "@/lib/actions/admin/gradients/getCategories";
 import { updateGradient } from "@/lib/actions/admin/gradients/updateGradient";
 import { useSession } from "@/lib/auth-client";
 
@@ -202,38 +202,44 @@ export function AdminGradientsTab() {
 							/>
 						</div>
 
-					<div>
-						<label
-							htmlFor="category"
-							className="block text-sm font-medium text-slate-300 mb-2"
-						>
-							Category
-						</label>
-						<Input
-							id="category"
-							value={formData.category}
-							onChange={(e) =>
-								setFormData({ ...formData, category: e.target.value })
-							}
-							placeholder="Type a category or select from below"
-							className="bg-slate-700 border-slate-600 text-white mb-2"
-						/>
-						<Select 
-							value={categories.includes(formData.category) ? formData.category : ""} 
-							onValueChange={(value) => setFormData({ ...formData, category: value })}
-						>
-							<SelectTrigger className="bg-slate-700 border-slate-600 text-white">
-								<SelectValue placeholder="Select a category" />
-							</SelectTrigger>
-							<SelectContent className="bg-slate-700 border-slate-600">
-								{categories.map((cat) => (
-									<SelectItem key={cat} value={cat} className="text-white">
-										{cat}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-					</div>
+						<div>
+							<label
+								htmlFor="category"
+								className="block text-sm font-medium text-slate-300 mb-2"
+							>
+								Category
+							</label>
+							<Input
+								id="category"
+								value={formData.category}
+								onChange={(e) =>
+									setFormData({ ...formData, category: e.target.value })
+								}
+								placeholder="Type a category or select from below"
+								className="bg-slate-700 border-slate-600 text-white mb-2"
+							/>
+							<Select
+								value={
+									categories.includes(formData.category)
+										? formData.category
+										: ""
+								}
+								onValueChange={(value) =>
+									setFormData({ ...formData, category: value })
+								}
+							>
+								<SelectTrigger className="bg-slate-700 border-slate-600 text-white">
+									<SelectValue placeholder="Select a category" />
+								</SelectTrigger>
+								<SelectContent className="bg-slate-700 border-slate-600">
+									{categories.map((cat) => (
+										<SelectItem key={cat} value={cat} className="text-white">
+											{cat}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
 
 						<div className="grid grid-cols-2 gap-4">
 							<div>
@@ -350,7 +356,7 @@ export function AdminGradientsTab() {
 								max="360"
 								value={formData.angle}
 								onChange={(e) => {
-									const angle = parseInt(e.target.value);
+									const angle = parseInt(e.target.value, 10);
 									setFormData({ ...formData, angle });
 									updateGradientString(
 										formData.colorStart,

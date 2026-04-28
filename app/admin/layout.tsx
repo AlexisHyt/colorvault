@@ -17,7 +17,7 @@ export default function AdminLayout({
 	useEffect(() => {
 		if (
 			!isPending &&
-			(!session?.user || !session.user.emailVerified || session.user.role !== "admin")
+			(!session?.user?.emailVerified || session.user.role !== "admin")
 		) {
 			router.push("/");
 		}
@@ -31,7 +31,7 @@ export default function AdminLayout({
 		);
 	}
 
-	if (!session?.user || !session.user.emailVerified || session.user.role !== "admin") {
+	if (!session?.user?.emailVerified || session.user.role !== "admin") {
 		return null;
 	}
 

@@ -38,4 +38,3 @@ export async function updateGradient(params: UpdateGradientParams) {
 
 	return updated;
 }
-

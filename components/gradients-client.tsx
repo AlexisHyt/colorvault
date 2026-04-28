@@ -8,8 +8,8 @@ import { FavoriteButton } from "@/components/FavoriteButton";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useFavorites } from "@/hooks/use-favorites";
-import type { Gradient } from "@/lib/actions/gradients";
 import type { RawFavorite } from "@/lib/actions/favorites";
+import type { Gradient } from "@/lib/actions/gradients";
 
 interface Props {
 	gradients: Gradient[];
@@ -17,7 +17,11 @@ interface Props {
 	isAuthenticated?: boolean;
 }
 
-export function GradientsClient({ gradients, initialFavorites = [], isAuthenticated = false }: Props) {
+export function GradientsClient({
+	gradients,
+	initialFavorites = [],
+	isAuthenticated = false,
+}: Props) {
 	const { isFavorite, toggleFavorite } = useFavorites(initialFavorites);
 
 	const categories = useMemo(

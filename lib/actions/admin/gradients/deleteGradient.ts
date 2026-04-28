@@ -12,4 +12,3 @@ export async function deleteGradient(id: number) {
 
 	return true;
 }
-

@@ -71,24 +71,36 @@ export function WebsitesClient({
 									<div className="flex items-center gap-2">
 										<div
 											className="w-10 h-10 rounded border border-slate-600 shrink-0"
-											style={{ backgroundColor: oklchaToHex(website.primaryColor) }}
+											style={{
+												backgroundColor: oklchaToHex(website.primaryColor),
+											}}
 										/>
 										<div className="flex-1">
-											<CopyButton value={oklchaToHex(website.primaryColor)} label="HEX" />
+											<CopyButton
+												value={oklchaToHex(website.primaryColor)}
+												label="HEX"
+											/>
 										</div>
 									</div>
 								</div>
 
 								{website.secondaryColor && (
 									<div>
-										<p className="text-xs text-slate-500 mb-2">Secondary Color</p>
+										<p className="text-xs text-slate-500 mb-2">
+											Secondary Color
+										</p>
 										<div className="flex items-center gap-2">
 											<div
 												className="w-10 h-10 rounded border border-slate-600 shrink-0"
-												style={{ backgroundColor: oklchaToHex(website.secondaryColor) }}
+												style={{
+													backgroundColor: oklchaToHex(website.secondaryColor),
+												}}
 											/>
 											<div className="flex-1">
-												<CopyButton value={oklchaToHex(website.secondaryColor)} label="HEX" />
+												<CopyButton
+													value={oklchaToHex(website.secondaryColor)}
+													label="HEX"
+												/>
 											</div>
 										</div>
 									</div>
@@ -100,10 +112,15 @@ export function WebsitesClient({
 										<div className="flex items-center gap-2">
 											<div
 												className="w-10 h-10 rounded border border-slate-600 shrink-0"
-												style={{ backgroundColor: oklchaToHex(website.accentColor) }}
+												style={{
+													backgroundColor: oklchaToHex(website.accentColor),
+												}}
 											/>
 											<div className="flex-1">
-												<CopyButton value={oklchaToHex(website.accentColor)} label="HEX" />
+												<CopyButton
+													value={oklchaToHex(website.accentColor)}
+													label="HEX"
+												/>
 											</div>
 										</div>
 									</div>

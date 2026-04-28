@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
-import { getFavorites } from '@/lib/actions/favorites';
-import { getVerifiedSession } from '@/lib/auth-utils';
 import { PaletteDetailClient } from "@/components/palette-detail-client";
 import { getPalettes } from "@/lib/actions/admin/palette/getPalettes";
+import { getFavorites } from "@/lib/actions/favorites";
+import { getVerifiedSession } from "@/lib/auth-utils";
 
 interface Props {
 	params: Promise<{ slug: string }>;

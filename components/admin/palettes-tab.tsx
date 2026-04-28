@@ -72,10 +72,7 @@ export function AdminPalettesTab() {
 		}
 	};
 
-	const handleReorderRow = async (
-		rowId: number,
-		direction: "up" | "down",
-	) => {
+	const handleReorderRow = async (rowId: number, direction: "up" | "down") => {
 		const result = await reorderPaletteRow(rowId, direction);
 		if (result) {
 			setPalettes(result);
@@ -193,7 +190,9 @@ export function AdminPalettesTab() {
 																variant="ghost"
 																size="icon"
 																className="h-5 w-5 cursor-pointer"
-																disabled={colorIndex === sortedColors.length - 1}
+																disabled={
+																	colorIndex === sortedColors.length - 1
+																}
 																onClick={() =>
 																	handleReorderColor(color.id, "right")
 																}

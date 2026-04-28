@@ -1,12 +1,9 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin } from "better-auth/plugins";
-import { jsx } from "react/jsx-runtime";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
 import { baseEmail, resend } from "@/lib/emails/resend.config";
-import EmailActivation from "@/lib/emails/templates/EmailActivation";
-import EmailResetPassword from "@/lib/emails/templates/EmailResetPassword";
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
@@ -23,7 +20,7 @@ export const auth = betterAuth({
 	emailAndPassword: {
 		enabled: true,
 		requireEmailVerification: true,
-		sendResetPassword: async ({ user, url, token }, request) => {
+		sendResetPassword: async ({ user, url, token: _ }, _request) => {
 			await resend.emails.send({
 				from: baseEmail,
 				replyTo: baseEmail,
@@ -33,7 +30,7 @@ export const auth = betterAuth({
 				// react: jsx(EmailResetPassword, { url }),
 			});
 		},
-		onExistingUserSignUp: async ({ user }, request) => {
+		onExistingUserSignUp: async ({ user }, _request) => {
 			await resend.emails.send({
 				from: baseEmail,
 				replyTo: baseEmail,
