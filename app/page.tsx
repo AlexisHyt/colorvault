@@ -1,4 +1,4 @@
-import { Palette, Sparkles, Waves, Zap } from "lucide-react";
+import { CircleDot, Palette, Sparkles, Wand2, Waves, Zap } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -32,6 +32,16 @@ export default function HomePage() {
 								Browse Gradients
 							</Button>
 						</Link>
+						<Link href="/generate">
+							<Button variant="bigBlue" size="xl">
+								Generate Palette
+							</Button>
+						</Link>
+						<Link href="/harmonies">
+							<Button variant="bigBlue" size="xl">
+								Color Harmonies
+							</Button>
+						</Link>
 					</div>
 				</div>
 			</section>
@@ -43,7 +53,7 @@ export default function HomePage() {
 						Features
 					</h2>
 
-					<div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
 						<div className="bg-slate-800/30 border border-slate-700 rounded-lg p-8 text-center">
 							<div className="flex justify-center mb-4">
 								<div className="bg-blue-600/20 p-3 rounded-lg">
@@ -100,6 +110,36 @@ export default function HomePage() {
 								Copy colors in HEX, RGB, RGBA, or HSL format with one click
 							</p>
 						</div>
+
+						<div className="bg-slate-800/30 border border-slate-700 rounded-lg p-8 text-center">
+							<div className="flex justify-center mb-4">
+								<div className="bg-purple-600/20 p-3 rounded-lg">
+									<Wand2 className="w-8 h-8 text-purple-400" />
+								</div>
+							</div>
+							<h3 className="text-xl font-semibold text-white mb-2">
+								Palette Generator
+							</h3>
+							<p className="text-slate-400">
+								Generate custom palettes from a color, an image, or let AI
+								inspire you
+							</p>
+						</div>
+
+						<div className="bg-slate-800/30 border border-slate-700 rounded-lg p-8 text-center">
+							<div className="flex justify-center mb-4">
+								<div className="bg-pink-600/20 p-3 rounded-lg">
+									<CircleDot className="w-8 h-8 text-pink-400" />
+								</div>
+							</div>
+							<h3 className="text-xl font-semibold text-white mb-2">
+								Color Harmonies
+							</h3>
+							<p className="text-slate-400">
+								Visualize complementary, triadic, analogous and other color
+								relationships
+							</p>
+						</div>
 					</div>
 				</div>
 			</section>
@@ -122,6 +162,16 @@ export default function HomePage() {
 						<Link href="/websites">
 							<Button className="bg-cyan-600 hover:bg-cyan-700 text-white">
 								Website Colors
+							</Button>
+						</Link>
+						<Link href="/generate">
+							<Button className="bg-purple-600 hover:bg-purple-700 text-white">
+								Generate Palette
+							</Button>
+						</Link>
+						<Link href="/harmonies">
+							<Button className="bg-pink-600 hover:bg-pink-700 text-white">
+								Color Harmonies
 							</Button>
 						</Link>
 					</div>
