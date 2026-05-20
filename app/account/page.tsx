@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { AccountClient } from "@/components/account-client";
 import { auth } from "@/lib/auth";
+
+export const metadata: Metadata = {
+	title: "My Account — ColorVault",
+	description: "Manage your account, username, password, and profile settings.",
+};
 
 export default async function AccountPage() {
 	const session = await auth.api.getSession({ headers: await headers() });

@@ -1,6 +1,35 @@
 import { CircleDot, Palette, Sparkles, Wand2, Waves, Zap } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+
+export const metadata: Metadata = {
+	title: "ColorVault - Find & Explore Amazing Color Palettes",
+	description:
+		"Discover color palettes, website brand colors, and gradients in multiple formats. Sign in to save your favorites.",
+	openGraph: {
+		title: "ColorVault - Find & Explore Amazing Color Palettes",
+		description:
+			"Discover color palettes, website brand colors, and gradients in multiple formats. Sign in to save your favorites.",
+		url: "https://colorvault.alexishayat.me",
+		type: "website",
+		images: [
+			{
+				url: "https://colorvault.alexishayat.me/ColorVault.png",
+				width: 1200,
+				height: 630,
+				alt: "ColorVault",
+			},
+		],
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: "ColorVault - Find & Explore Amazing Color Palettes",
+		description:
+			"Discover color palettes, website brand colors, and gradients in multiple formats. Sign in to save your favorites.",
+		images: ["https://colorvault.alexishayat.me/ColorVault.png"],
+	},
+};
 
 export default function HomePage() {
 	return (

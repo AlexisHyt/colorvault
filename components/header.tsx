@@ -1,6 +1,7 @@
 "use client";
 
 import { UserCircle } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -22,8 +23,14 @@ export function Header() {
 				<div className="flex items-center gap-8">
 					<Link
 						href="/"
-						className="text-2xl font-bold text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-cyan-400"
+						className="text-2xl font-bold text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-cyan-400 flex items-center justify-center gap-2"
 					>
+						<Image
+							src={"ColorVault.png"}
+							alt={"ColorVault"}
+							height={40}
+							width={40}
+						/>
 						ColorVault
 					</Link>
 
@@ -51,6 +58,12 @@ export function Header() {
 							className="text-slate-300 hover:text-white transition"
 						>
 							Generator
+						</Link>
+						<Link
+							href="/wcag"
+							className="text-slate-300 hover:text-white transition"
+						>
+							WCAG Checker
 						</Link>
 						<Link
 							href="/harmonies"

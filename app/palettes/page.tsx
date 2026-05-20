@@ -1,7 +1,27 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { getPalettes } from "@/lib/actions/admin/palette/getPalettes";
+
+export const metadata: Metadata = {
+	title: "Color Palettes — ColorVault",
+	description:
+		"Browse curated color palettes from popular design systems (Material, Bootstrap, Tailwind). Copy colors in HEX, RGB, RGBA, or HSL format.",
+	openGraph: {
+		title: "Color Palettes — ColorVault",
+		description:
+			"Browse curated color palettes from popular design systems (Material, Bootstrap, Tailwind). Copy colors in HEX, RGB, RGBA, or HSL format.",
+		url: "https://colorvault.alexishayat.me/palettes",
+		type: "website",
+	},
+	twitter: {
+		card: "summary",
+		title: "Color Palettes — ColorVault",
+		description:
+			"Browse curated color palettes from popular design systems (Material, Bootstrap, Tailwind).",
+	},
+};
 
 export default async function PalettesPage() {
 	const palettes = await getPalettes();

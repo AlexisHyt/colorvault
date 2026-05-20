@@ -1,8 +1,15 @@
 import { Heart } from "lucide-react";
+import type { Metadata } from "next";
 import { FavoritesClient } from "@/components/favorites-client";
 import { getFavoritesWithDetails } from "@/lib/actions/favorites";
 import { getSavedPalettes } from "@/lib/actions/saved-palettes";
 import { getVerifiedSession } from "@/lib/auth-utils";
+
+export const metadata: Metadata = {
+	title: "Favorites — ColorVault",
+	description:
+		"Your saved colors and gradients. Access your favorite palettes and gradients from anywhere.",
+};
 
 export default async function FavoritesPage() {
 	const session = await getVerifiedSession();
