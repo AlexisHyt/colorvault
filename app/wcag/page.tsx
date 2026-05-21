@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { WcagTesterClient } from "@/components/wcag-tester-client";
 
 export const metadata: Metadata = {
@@ -20,7 +21,11 @@ export default function WcagPage() {
 				</p>
 			</div>
 
-			<WcagTesterClient />
+			<Suspense
+				fallback={<div className="text-slate-500">Loading WCAG Tester...</div>}
+			>
+				<WcagTesterClient />
+			</Suspense>
 		</main>
 	);
 }
