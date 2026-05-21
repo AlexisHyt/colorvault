@@ -1,13 +1,11 @@
 import { Check, Copy } from "lucide-react";
-import { useState } from "react";
+import { useClipboard } from "@/hooks/use-clipboard";
 
 export function ColorSwatch({ hex, shade }: { hex: string; shade: number }) {
-	const [copied, setCopied] = useState(false);
+	const { copied, copyToClipboard } = useClipboard();
 
 	const copy = () => {
-		navigator.clipboard.writeText(hex);
-		setCopied(true);
-		setTimeout(() => setCopied(false), 1500);
+		copyToClipboard(hex);
 	};
 
 	return (
@@ -30,7 +28,9 @@ export function ColorSwatch({ hex, shade }: { hex: string; shade: number }) {
 				</span>
 			</div>
 			<span className="text-xs text-slate-400 font-mono">{shade}</span>
-			<span className="text-xs text-slate-500 font-mono">{hex}</span>
+			<span className="text-xs text-slate-500 font-mono hidden md:block">
+				{hex}
+			</span>
 		</button>
 	);
 }

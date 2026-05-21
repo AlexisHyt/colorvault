@@ -144,7 +144,7 @@ export function WcagTesterClient() {
 
 			{/* Preview and results */}
 			{isValidFg && isValidBg && (
-				<div className="grid grid-cols-2 gap-6">
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 					<ContrastPreview foreground={fgRaw} background={bgRaw} />
 
 					<ContrastResults foreground={fgRaw} background={bgRaw} />

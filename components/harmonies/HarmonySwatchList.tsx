@@ -1,17 +1,15 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useClipboard } from "@/hooks/use-clipboard";
 import type { HarmonyColor } from "@/lib/generate-palette";
 
 function SwatchCard({ color }: { color: HarmonyColor }) {
-	const [copied, setCopied] = useState(false);
+	const { copied, copyToClipboard } = useClipboard();
 
 	const handleCopy = () => {
-		navigator.clipboard.writeText(color.hex);
-		setCopied(true);
-		setTimeout(() => setCopied(false), 2000);
+		copyToClipboard(color.hex);
 	};
 
 	return (

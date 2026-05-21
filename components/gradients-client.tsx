@@ -7,6 +7,7 @@ import { atomOneDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useClipboard } from "@/hooks/use-clipboard";
 import { useFavorites } from "@/hooks/use-favorites";
 import type { RawFavorite } from "@/lib/actions/favorites";
 import type { Gradient } from "@/lib/actions/gradients";
@@ -23,6 +24,7 @@ export function GradientsClient({
 	isAuthenticated = false,
 }: Props) {
 	const { isFavorite, toggleFavorite } = useFavorites(initialFavorites);
+	const { copyToClipboard: copyToClipboardHook } = useClipboard();
 
 	const categories = useMemo(
 		() => [...new Set(gradients.map((g) => g.category))],
@@ -39,9 +41,10 @@ export function GradientsClient({
 	);
 
 	const copyToClipboard = (text: string, id: number) => {
-		navigator.clipboard.writeText(text);
-		setCopied(id);
-		setTimeout(() => setCopied(null), 2000);
+		copyToClipboardHook(text).then(() => {
+			setCopied(id);
+			setTimeout(() => setCopied(null), 2000);
+		});
 	};
 
 	return (

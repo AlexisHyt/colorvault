@@ -1,14 +1,12 @@
 import { Check, Copy } from "lucide-react";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useClipboard } from "@/hooks/use-clipboard";
 
 export function CodeBlock({ code }: { code: string }) {
-	const [copied, setCopied] = useState(false);
+	const { copied, copyToClipboard } = useClipboard();
 
 	const copy = () => {
-		navigator.clipboard.writeText(code);
-		setCopied(true);
-		setTimeout(() => setCopied(false), 2000);
+		copyToClipboard(code);
 	};
 
 	return (

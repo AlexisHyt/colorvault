@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/tooltip";
 import { WebsitePreview } from "@/components/WebsitePreview";
 import { useFavorites } from "@/hooks/use-favorites";
+import { useIsMobile } from "@/hooks/use-mobile";
 import type { RawFavorite } from "@/lib/actions/favorites";
 import type { Color, ColorPaletteWithColors } from "@/lib/types";
 import {
@@ -45,6 +46,7 @@ export function PaletteDetailClient({
 	const [selectedColor, setSelectedColor] = useState<Color>(allColors[0]);
 	const [searchTerm, setSearchTerm] = useState("");
 	const { isFavorite, toggleFavorite } = useFavorites(initialFavorites);
+	const isMobile = useIsMobile();
 
 	const normalizedSearchTerm = searchTerm.trim().toLowerCase();
 	const filteredRows =
@@ -76,8 +78,8 @@ export function PaletteDetailClient({
 
 	return (
 		<div
-			className="flex overflow-hidden"
-			style={{ height: "calc(-65px + 100vh)" }}
+			className="flex flex-col md:flex-row overflow-hidden"
+			style={{ height: isMobile ? "auto" : "calc(-65px + 100vh)" }}
 		>
 			{/* ── Left panel: color list ── */}
 			<div className="flex flex-col border-r h-full border-slate-800 bg-slate-900/50 pt-4 pl-4 space-y-8 min-w-1/4">

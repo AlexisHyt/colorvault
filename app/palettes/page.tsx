@@ -36,7 +36,7 @@ export default async function PalettesPage() {
 			</div>
 
 			<p className="text-xl mb-2 font-semibold">Classic palettes</p>
-			<div className="grid grid-cols-3 gap-4 mb-8">
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
 				{palettes
 					.filter((palette) => palette.category === "main")
 					.map((palette) => (
@@ -65,7 +65,7 @@ export default async function PalettesPage() {
 			</div>
 
 			<p className="text-xl mb-2 font-semibold">Custom palettes</p>
-			<div className="grid grid-cols-3 gap-4">
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 				{palettes
 					.filter((palette) => palette.category !== "main")
 					.map((palette) => (
