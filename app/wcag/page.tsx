@@ -17,7 +17,8 @@ export default function WcagPage() {
 				</h1>
 				<p className="text-slate-400 max-w-2xl">
 					Test accessibility contrast ratios between any two colors. Check WCAG
-					AA and AAA compliance for both normal and large text.
+					AA and AAA compliance for both normal and large text, then compare how
+					it can look for common forms of color blindness.
 				</p>
 			</div>
 

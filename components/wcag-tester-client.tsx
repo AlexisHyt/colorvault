@@ -4,12 +4,34 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { ContrastPreview } from "@/components/wcag/ContrastPreview";
 import { ContrastResults } from "@/components/wcag/ContrastResults";
+import {
+	COLORBLIND_LABELS,
+	type ColorblindType,
+} from "@/lib/generate/colorblind";
 import { isValidHex } from "@/lib/generate/isValidHex";
 
 const DEFAULT_FOREGROUND = "#ffffff";
 const DEFAULT_BACKGROUND = "#6366f1";
+const DEFAULT_VISION_MODE = "normal";
+
+type VisionMode = ColorblindType | "all";
+
+const VISION_MODE_LABELS: Record<VisionMode, string> = {
+	normal: COLORBLIND_LABELS.normal,
+	deuteranopia: COLORBLIND_LABELS.deuteranopia,
+	protanopia: COLORBLIND_LABELS.protanopia,
+	tritanopia: COLORBLIND_LABELS.tritanopia,
+	all: "Compare all vision modes",
+};
 
 function parseUrlHexParam(value: string | null) {
 	if (!value) return undefined;
@@ -31,6 +53,15 @@ function toUrlHexParam(hex: string) {
 	return undefined;
 }
 
+function parseVisionModeParam(value: string | null): VisionMode {
+	if (!value) return DEFAULT_VISION_MODE;
+	const normalized = value.trim().toLowerCase();
+	if (normalized in VISION_MODE_LABELS) {
+		return normalized as VisionMode;
+	}
+	return DEFAULT_VISION_MODE;
+}
+
 export function WcagTesterClient() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
@@ -41,6 +72,9 @@ export function WcagTesterClient() {
 	);
 	const [background, setBackground] = useState(
 		parseUrlHexParam(searchParams.get("bg")) ?? DEFAULT_BACKGROUND,
+	);
+	const [visionMode, setVisionMode] = useState<VisionMode>(
+		parseVisionModeParam(searchParams.get("vision")),
 	);
 
 	const fgRaw = foreground;
@@ -59,13 +93,27 @@ export function WcagTesterClient() {
 		const params = new URLSearchParams(searchParams.toString());
 		params.set("fg", fgParam);
 		params.set("bg", bgParam);
+		if (visionMode === DEFAULT_VISION_MODE) {
+			params.delete("vision");
+		} else {
+			params.set("vision", visionMode);
+		}
 
 		const nextQuery = params.toString();
 		const currentQuery = searchParams.toString();
 		if (nextQuery === currentQuery) return;
 
 		router.replace(`${pathname}?${nextQuery}`);
-	}, [fgRaw, bgRaw, isValidFg, isValidBg, searchParams, router, pathname]);
+	}, [
+		fgRaw,
+		bgRaw,
+		isValidFg,
+		isValidBg,
+		visionMode,
+		searchParams,
+		router,
+		pathname,
+	]);
 
 	return (
 		<div className="space-y-10">
@@ -99,7 +147,7 @@ export function WcagTesterClient() {
 							/>
 							{isValidFg && (
 								<div
-									className="w-12 h-12 rounded-md border border-slate-600 flex-shrink-0"
+									className="w-12 h-12 rounded-md border border-slate-600 shrink-0"
 									style={{ backgroundColor: fgRaw }}
 								/>
 							)}
@@ -133,11 +181,39 @@ export function WcagTesterClient() {
 							/>
 							{isValidBg && (
 								<div
-									className="w-12 h-12 rounded-md border border-slate-600 flex-shrink-0"
+									className="w-12 h-12 rounded-md border border-slate-600 shrink-0"
 									style={{ backgroundColor: bgRaw }}
 								/>
 							)}
 						</div>
+					</div>
+				</div>
+
+				<div className="mt-6 border-t border-slate-700 pt-6">
+					<div className="flex flex-col gap-2 max-w-sm">
+						<Label className="text-white font-semibold">
+							Vision Simulation
+						</Label>
+						<p className="text-xs text-slate-400">
+							Compare how contrast may appear for different color vision types.
+						</p>
+						<Select
+							value={visionMode}
+							onValueChange={(value) => setVisionMode(value as VisionMode)}
+						>
+							<SelectTrigger className="w-full bg-slate-800 border-slate-600 text-white">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent className="bg-slate-800 border-slate-700 text-slate-100">
+								{(
+									Object.entries(VISION_MODE_LABELS) as [VisionMode, string][]
+								).map(([value, label]) => (
+									<SelectItem key={value} value={value}>
+										{label}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
 					</div>
 				</div>
 			</div>
@@ -145,9 +221,17 @@ export function WcagTesterClient() {
 			{/* Preview and results */}
 			{isValidFg && isValidBg && (
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-					<ContrastPreview foreground={fgRaw} background={bgRaw} />
+					<ContrastPreview
+						foreground={fgRaw}
+						background={bgRaw}
+						visionMode={visionMode}
+					/>
 
-					<ContrastResults foreground={fgRaw} background={bgRaw} />
+					<ContrastResults
+						foreground={fgRaw}
+						background={bgRaw}
+						visionMode={visionMode}
+					/>
 				</div>
 			)}
 
