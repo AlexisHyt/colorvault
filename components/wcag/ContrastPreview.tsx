@@ -4,9 +4,10 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
 	COLORBLIND_LABELS,
+	COLORBLIND_ORDER,
 	type ColorblindType,
 	simulateColorblind,
-} from "@/lib/generate/colorblind";
+} from "@/lib/generate/colorblind-helpers";
 
 interface ContrastPreviewProps {
 	foreground: string;
@@ -21,9 +22,7 @@ export function ContrastPreview({
 }: ContrastPreviewProps) {
 	const [previewText, setPreviewText] = useState("Aa Sample Text");
 	const modes: ColorblindType[] =
-		visionMode === "all"
-			? ["normal", "deuteranopia", "protanopia", "tritanopia"]
-			: [visionMode];
+		visionMode === "all" ? COLORBLIND_ORDER : [visionMode];
 
 	return (
 		<div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-6">
@@ -47,8 +46,8 @@ export function ContrastPreview({
 
 				<div
 					className={
-						modes.length > 1
-							? "grid grid-cols-1 xl:grid-cols-2 gap-4"
+						visionMode === "all"
+							? "grid grid-cols-1 md:grid-cols-2 gap-4"
 							: "flex flex-col"
 					}
 				>
@@ -72,7 +71,7 @@ export function ContrastPreview({
 										style={{ backgroundColor: simulatedBackground }}
 									>
 										<p
-											className="text-base"
+											className="text-base py-4"
 											style={{ color: simulatedForeground }}
 										>
 											{previewText}
@@ -89,7 +88,7 @@ export function ContrastPreview({
 										style={{ backgroundColor: simulatedBackground }}
 									>
 										<p
-											className="text-2xl font-bold"
+											className="text-2xl font-bold py-4"
 											style={{ color: simulatedForeground }}
 										>
 											{previewText}

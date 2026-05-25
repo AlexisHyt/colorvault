@@ -13,7 +13,7 @@ import {
 	COLORBLIND_LABELS,
 	type ColorblindType,
 	simulateColorblind,
-} from "@/lib/generate/colorblind";
+} from "@/lib/generate/colorblind-helpers";
 import { luminance } from "@/lib/generate/luminance";
 import { textOn } from "@/lib/generate/textOn";
 import type { ColorRole } from "@/lib/generate-palette";

@@ -5,7 +5,7 @@ import {
 	COLORBLIND_LABELS,
 	type ColorblindType,
 	simulateColorblind,
-} from "@/lib/generate/colorblind";
+} from "@/lib/generate/colorblind-helpers";
 import { contrastRatio, wcagLevel } from "@/lib/generate/wcag";
 import { cn } from "@/lib/utils";
 
@@ -86,8 +86,8 @@ export function ContrastResults({
 
 				<div
 					className={
-						scenarios.length > 1
-							? "grid grid-cols-1 xl:grid-cols-2 gap-4"
+						visionMode === "all"
+							? "grid grid-cols-1 md:grid-cols-2 gap-4"
 							: "flex flex-col"
 					}
 				>

@@ -1,86 +1,87 @@
-/**
- * Colorblind simulation using LMS cone response matrices.
- * Based on Viénot, Brettel & Mollon (1999) + Machado et al. (2009).
- */
+// Based on https://ixora.io/projects/colorblindness/color-blindness-simulation-research.html
 
-export type ColorblindType =
-	| "normal"
-	| "deuteranopia"
-	| "protanopia"
-	| "tritanopia";
+type Vec3 = [number, number, number];
+type Mat3 = [Vec3, Vec3, Vec3];
 
-export const COLORBLIND_LABELS: Record<ColorblindType, string> = {
-	normal: "Normal vision",
-	deuteranopia: "Deuteranopia (green-blind)",
-	protanopia: "Protanopia (red-blind)",
-	tritanopia: "Tritanopia (blue-blind)",
+type ColorBlindnessType = "protanopia" | "deuteranopia" | "tritanopia";
+
+const RGB_TO_LMS: Mat3 = [
+	[0.31399022, 0.63951294, 0.04649755],
+	[0.15537241, 0.75789446, 0.08670142],
+	[0.01775239, 0.10944209, 0.87256922],
+];
+
+const LMS_TO_RGB: Mat3 = [
+	[5.47221206, -4.6419601, 0.16963708],
+	[-1.1252419, 2.29317094, -0.1678952],
+	[0.02980165, -0.19318073, 1.16364789],
+];
+
+const SIMULATION_MATRICES: Record<ColorBlindnessType, Mat3> = {
+	protanopia: [
+		[0, 1.05118294, -0.05116099],
+		[0, 1, 0],
+		[0, 0, 1],
+	],
+	deuteranopia: [
+		[1, 0, 0],
+		[0.9513092, 0, 0.04866992],
+		[0, 0, 1],
+	],
+	tritanopia: [
+		[1, 0, 0],
+		[0, 1, 0],
+		[-0.86744736, 1.86727089, 0],
+	],
 };
 
-// sRGB → linear RGB
-function toLinear(c: number): number {
-	return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-}
-
-// linear RGB → sRGB
-function toSRGB(c: number): number {
-	return c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055;
-}
-
-function hexToLinearRGB(hex: string): [number, number, number] {
-	const r = parseInt(hex.slice(1, 3), 16) / 255;
-	const g = parseInt(hex.slice(3, 5), 16) / 255;
-	const b = parseInt(hex.slice(5, 7), 16) / 255;
-	return [toLinear(r), toLinear(g), toLinear(b)];
-}
-
-function linearRGBToHex(r: number, g: number, b: number): string {
-	const clamp = (v: number) => Math.max(0, Math.min(1, v));
-	const toInt = (v: number) => Math.round(clamp(toSRGB(v)) * 255);
-	return `#${toInt(r).toString(16).padStart(2, "0")}${toInt(g).toString(16).padStart(2, "0")}${toInt(b).toString(16).padStart(2, "0")}`;
-}
-
-// RGB → LMS (Hunt-Pointer-Estevez, D65)
-function rgbToLMS(r: number, g: number, b: number): [number, number, number] {
+function multiplyMat3Vec3(m: Mat3, v: Vec3): Vec3 {
 	return [
-		0.4002 * r + 0.7076 * g - 0.0808 * b,
-		-0.2263 * r + 1.1653 * g + 0.0457 * b,
-		0.9182 * b,
+		m[0][0] * v[0] + m[0][1] * v[1] + m[0][2] * v[2],
+		m[1][0] * v[0] + m[1][1] * v[1] + m[1][2] * v[2],
+		m[2][0] * v[0] + m[2][1] * v[1] + m[2][2] * v[2],
 	];
 }
 
-// LMS → RGB
-function lmsToRGB(l: number, m: number, s: number): [number, number, number] {
-	return [
-		3.2406 * l - 1.5372 * m - 0.4986 * s,
-		-0.9689 * l + 1.8758 * m + 0.0415 * s,
-		0.0557 * l - 0.204 * m + 1.057 * s,
-	];
+function srgbToLinear(v: number): number {
+	const x = v / 255;
+
+	if (x <= 0.04045) {
+		return x / 12.92;
+	}
+
+	return ((x + 0.055) / 1.055) ** 2.4;
 }
 
-const MATRICES: Record<
-	Exclude<ColorblindType, "normal">,
-	[number, number, number, number, number, number, number, number, number]
-> = {
-	// Deuteranopia: missing M cones — project M onto L & S plane
-	deuteranopia: [1, 0, 0, 0.494207, 0, 1.24827, 0, 0, 1],
-	// Protanopia: missing L cones — project L onto M & S plane
-	protanopia: [0, 2.02344, -2.52581, 0, 1, 0, 0, 0, 1],
-	// Tritanopia: missing S cones — project S onto L & M plane
-	tritanopia: [1, 0, 0, 0, 1, 0, -0.395913, 0.801109, 0],
-};
+function linearToSrgb(v: number): number {
+	const clamped = Math.min(1, Math.max(0, v));
 
-export function simulateColorblind(hex: string, type: ColorblindType): string {
-	if (type === "normal") return hex;
+	if (clamped <= 0.0031308) {
+		return Math.round(255 * 12.92 * clamped);
+	}
 
-	const [lr, lg, lb] = hexToLinearRGB(hex);
-	const [l, m, s] = rgbToLMS(lr, lg, lb);
+	return Math.round(255 * (1.055 * clamped ** (1 / 2.4) - 0.055));
+}
 
-	const [m00, m01, m02, m10, m11, m12, m20, m21, m22] = MATRICES[type];
+export function simulateColorBlindness(
+	rgb: Vec3,
+	type: ColorBlindnessType,
+): Vec3 {
+	const linearRgb: Vec3 = [
+		srgbToLinear(rgb[0]),
+		srgbToLinear(rgb[1]),
+		srgbToLinear(rgb[2]),
+	];
 
-	const sl = m00 * l + m01 * m + m02 * s;
-	const sm = m10 * l + m11 * m + m12 * s;
-	const ss = m20 * l + m21 * m + m22 * s;
+	const lms = multiplyMat3Vec3(RGB_TO_LMS, linearRgb);
 
-	const [r, g, b] = lmsToRGB(sl, sm, ss);
-	return linearRGBToHex(r, g, b);
+	const simulatedLms = multiplyMat3Vec3(SIMULATION_MATRICES[type], lms);
+
+	const simulatedLinearRgb = multiplyMat3Vec3(LMS_TO_RGB, simulatedLms);
+
+	return [
+		linearToSrgb(simulatedLinearRgb[0]),
+		linearToSrgb(simulatedLinearRgb[1]),
+		linearToSrgb(simulatedLinearRgb[2]),
+	];
 }

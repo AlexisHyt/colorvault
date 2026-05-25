@@ -13,23 +13,16 @@ import {
 } from "@/components/ui/select";
 import { ContrastPreview } from "@/components/wcag/ContrastPreview";
 import { ContrastResults } from "@/components/wcag/ContrastResults";
-import {
-	COLORBLIND_LABELS,
-	type ColorblindType,
-} from "@/lib/generate/colorblind";
 import { isValidHex } from "@/lib/generate/isValidHex";
 
 const DEFAULT_FOREGROUND = "#ffffff";
 const DEFAULT_BACKGROUND = "#6366f1";
 const DEFAULT_VISION_MODE = "normal";
 
-type VisionMode = ColorblindType | "all";
+type VisionMode = "normal" | "all";
 
 const VISION_MODE_LABELS: Record<VisionMode, string> = {
-	normal: COLORBLIND_LABELS.normal,
-	deuteranopia: COLORBLIND_LABELS.deuteranopia,
-	protanopia: COLORBLIND_LABELS.protanopia,
-	tritanopia: COLORBLIND_LABELS.tritanopia,
+	normal: "Normal vision",
 	all: "Compare all vision modes",
 };
 
