@@ -71,6 +71,11 @@ export default function HomePage() {
 								Color Harmonies
 							</Button>
 						</Link>
+						<Link href="/convert">
+							<Button variant="bigBlue" size="xl">
+								Color Converter
+							</Button>
+						</Link>
 					</div>
 				</div>
 			</section>
@@ -136,7 +141,8 @@ export default function HomePage() {
 								Multiple Formats
 							</h3>
 							<p className="text-slate-400">
-								Copy colors in HEX, RGB, RGBA, or HSL format with one click
+								Convert and copy colors in HEX, RGB(A), HSL(A), HSV, CMYK, LAB,
+								LCH and OKLCH
 							</p>
 						</div>
 

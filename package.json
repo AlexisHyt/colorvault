@@ -6,6 +6,7 @@
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
+		"test:color-converter": "pnpm exec tsx scripts/test-color-converter.ts",
 		"format:check": "pnpx @biomejs/biome check .",
 		"format:fix": "pnpx @biomejs/biome check . --write"
 	},

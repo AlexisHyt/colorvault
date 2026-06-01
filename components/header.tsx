@@ -18,6 +18,7 @@ export function Header() {
 		{ href: "/websites", label: "Website Colors" },
 		{ href: "/gradients", label: "Gradients" },
 		{ href: "/generate", label: "Generator" },
+		{ href: "/convert", label: "Converter" },
 		{ href: "/wcag", label: "WCAG Checker" },
 		{ href: "/harmonies", label: "Harmonies" },
 		{ href: "/favorites", label: "Favorites", verifiedOnly: true },
