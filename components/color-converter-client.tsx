@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { convertColor } from "@/lib/color-converter";
+import { findClosestTailwindColor } from "@/lib/tailwind-colors";
 
 const DEFAULT_COLOR = "#6366f1";
 
@@ -43,13 +44,17 @@ export function ColorConverterClient() {
 
 	const conversion = useMemo(() => {
 		try {
+			const result = convertColor(input);
+			const tailwind = findClosestTailwindColor(result.previewHex);
 			return {
-				result: convertColor(input),
+				result,
+				tailwind,
 				error: null as string | null,
 			};
 		} catch (error) {
 			return {
 				result: null,
+				tailwind: null,
 				error:
 					error instanceof Error
 						? error.message
@@ -128,6 +133,54 @@ export function ColorConverterClient() {
 							value={conversion.result.formats[key]}
 						/>
 					))}
+				</div>
+			)}
+
+			{conversion.tailwind && (
+				<div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-6">
+					<h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+						<span className="text-slate-400 text-sm font-normal">Closest</span>
+						Tailwind CSS Color
+					</h2>
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div className="flex items-center gap-3 flex-1">
+							<div
+								className="w-14 h-14 rounded-xl border border-slate-600 shrink-0 shadow-lg"
+								style={{ backgroundColor: conversion.tailwind.hex }}
+							/>
+							<div>
+								<div className="flex items-center gap-2 flex-wrap">
+									<span className="font-mono text-lg font-bold text-white">
+										{conversion.tailwind.name}
+									</span>
+									<span className="text-xs text-slate-400 font-mono bg-slate-700/60 px-2 py-0.5 rounded">
+										{conversion.tailwind.hex.toUpperCase()}
+									</span>
+								</div>
+								<p className="text-xs text-slate-400 mt-1">
+									Delta E:{" "}
+									<span className="text-slate-300">
+										{conversion.tailwind.distance}
+									</span>
+									{conversion.tailwind.distance < 2
+										? " — near-perfect match"
+										: conversion.tailwind.distance < 10
+											? " — very close"
+											: " — approximate match"}
+								</p>
+							</div>
+						</div>
+						<div className="flex gap-2">
+							<CopyButton
+								label="Class name"
+								value={`bg-${conversion.tailwind.name}`}
+							/>
+							<CopyButton
+								label="HEX"
+								value={conversion.tailwind.hex.toUpperCase()}
+							/>
+						</div>
+					</div>
 				</div>
 			)}
 		</div>
