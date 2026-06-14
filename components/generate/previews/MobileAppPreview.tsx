@@ -5,7 +5,7 @@ export function MobileAppPreview({ theme }: PreviewTemplateProps) {
 		<div className="p-4" style={{ backgroundColor: theme.bgPage }}>
 			<div
 				className="mx-auto w-42.5 rounded-[20px] border p-2 space-y-2"
-				style={{ borderColor: theme.borderSoft, backgroundColor: theme.cardBg }}
+				style={{ borderColor: theme.border, backgroundColor: theme.cardBg }}
 			>
 				<div
 					className="h-6 rounded-lg"
@@ -18,15 +18,15 @@ export function MobileAppPreview({ theme }: PreviewTemplateProps) {
 					/>
 					<div
 						className="h-14 rounded-lg"
-						style={{ backgroundColor: theme.neutral, opacity: 0.7 }}
+						style={{ backgroundColor: theme.muted, opacity: 0.85 }}
 					/>
 				</div>
 				<div
 					className="h-16 rounded-lg"
-					style={{ backgroundColor: theme.accent, opacity: 0.75 }}
+					style={{ backgroundColor: theme.ring, opacity: 0.8 }}
 				/>
 				<div className="grid grid-cols-4 gap-1">
-					{[theme.primary, theme.secondary, theme.accent, theme.neutral].map(
+					{[theme.primary, theme.secondary, theme.ring, theme.destructive].map(
 						(color, index) => (
 							<div
 								key={`${color}-${index}`}

@@ -23,14 +23,18 @@ export const PREVIEW_TEMPLATE_OPTIONS: PreviewTemplateOption[] = [
 ];
 
 export type PreviewTheme = {
+	background: string;
+	foreground: string;
 	primary: string;
+	primaryForeground: string;
 	secondary: string;
-	accent: string;
-	neutral: string;
-	textOnPrimary: string;
-	textOnSecondary: string;
-	textOnAccent: string;
-	textOnNeutral: string;
+	secondaryForeground: string;
+	muted: string;
+	mutedForeground: string;
+	border: string;
+	input: string;
+	ring: string;
+	destructive: string;
 	bgPage: string;
 	cardBg: string;
 	textBody: string;

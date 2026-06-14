@@ -15,9 +15,7 @@ import {
 	type ColorblindType,
 	simulateColorblind,
 } from "@/lib/generate/colorblind-helpers";
-import { luminance } from "@/lib/generate/luminance";
-import { textOn } from "@/lib/generate/textOn";
-import type { ColorRole } from "@/lib/generate-palette";
+import type { SemanticTokenPalette } from "@/lib/generate-palette";
 import {
 	PREVIEW_TEMPLATE_OPTIONS,
 	type PreviewTemplateId,
@@ -79,44 +77,55 @@ export const TEMPLATE_COMPONENTS: Record<
 };
 
 function buildPreviewTheme(
-	colors: Record<ColorRole, string>,
+	semanticColors: SemanticTokenPalette,
 	cbMode: ColorblindType,
 ) {
 	const sim = (hex: string) => simulateColorblind(hex, cbMode);
-	const primary = sim(colors.primary);
-	const secondary = sim(colors.secondary);
-	const accent = sim(colors.accent);
-	const neutral = sim(colors.other);
-	const isNeutralLight = luminance(neutral) > 0.5;
+	const primary = sim(semanticColors.primary);
+	const secondary = sim(semanticColors.secondary);
+	const ring = sim(semanticColors.ring);
+	const background = sim(semanticColors.background);
+	const foreground = sim(semanticColors.foreground);
+	const muted = sim(semanticColors.muted);
+	const mutedForeground = sim(semanticColors["muted-foreground"]);
+	const border = sim(semanticColors.border);
+	const input = sim(semanticColors.input);
+	const destructive = sim(semanticColors.destructive);
+	const primaryForeground = sim(semanticColors["primary-foreground"]);
+	const secondaryForeground = sim(semanticColors["secondary-foreground"]);
 
 	const theme: PreviewTheme = {
+		background,
+		foreground,
 		primary,
 		secondary,
-		accent,
-		neutral,
-		textOnPrimary: textOn(primary),
-		textOnSecondary: textOn(secondary),
-		textOnAccent: textOn(accent),
-		textOnNeutral: textOn(neutral),
-		bgPage: isNeutralLight ? "#f1f5f9" : "#0f172a",
-		cardBg: isNeutralLight ? "#ffffff" : "#1e293b",
-		textMuted: isNeutralLight ? "rgba(0,0,0,0.45)" : "rgba(255,255,255,0.45)",
-		textBody: isNeutralLight ? "#1e293b" : "#f1f5f9",
-		borderSoft: "rgba(148,163,184,0.2)",
+		primaryForeground,
+		secondaryForeground,
+		muted,
+		mutedForeground,
+		border,
+		input,
+		ring,
+		destructive,
+		bgPage: background,
+		cardBg: muted,
+		textMuted: mutedForeground,
+		textBody: foreground,
+		borderSoft: border,
 	};
 
 	return theme;
 }
 
 export function PalettePreview({
-	colors,
+	semanticColors,
 }: {
-	colors: Record<ColorRole, string>;
+	semanticColors: SemanticTokenPalette;
 }) {
 	const [cbMode, setCbMode] = useState<ColorblindType>("normal");
 	const [templateId, setTemplateId] =
 		useState<PreviewTemplateId>("landing-page");
-	const theme = buildPreviewTheme(colors, cbMode);
+	const theme = buildPreviewTheme(semanticColors, cbMode);
 	const ActiveTemplate = TEMPLATE_COMPONENTS[templateId];
 
 	return (

@@ -5,12 +5,12 @@ export function EcommerceProductCardPreview({ theme }: PreviewTemplateProps) {
 		<div className="p-4" style={{ backgroundColor: theme.bgPage }}>
 			<div
 				className="mx-auto max-w-[220px] rounded-xl border overflow-hidden"
-				style={{ borderColor: theme.borderSoft, backgroundColor: theme.cardBg }}
+				style={{ borderColor: theme.border, backgroundColor: theme.cardBg }}
 			>
 				<div
 					className="h-28"
 					style={{
-						background: `linear-gradient(135deg, ${theme.primary}, ${theme.secondary})`,
+						background: `linear-gradient(135deg, ${theme.primary}, ${theme.ring})`,
 					}}
 				/>
 				<div className="p-3 space-y-2">
@@ -25,7 +25,7 @@ export function EcommerceProductCardPreview({ theme }: PreviewTemplateProps) {
 					<div className="flex items-center justify-between pt-1">
 						<div
 							className="h-4 w-12 rounded"
-							style={{ backgroundColor: theme.accent, opacity: 0.85 }}
+							style={{ backgroundColor: theme.secondary, opacity: 0.9 }}
 						/>
 						<div
 							className="h-7 w-20 rounded"

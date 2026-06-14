@@ -1,15 +1,16 @@
 "use client";
 
-import { Palette, Rss, Users, Zap } from "lucide-react";
+import { Cpu, Palette, Rss, Users, Zap } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
 import { AdminGradientsTab } from "@/components/admin/gradients-tab";
 import { AdminPalettesTab } from "@/components/admin/palettes-tab";
+import { AdminTechnologiesTab } from "@/components/admin/technologies-tab";
 import { AdminUsersTab } from "@/components/admin/users-tab";
 import { AdminWebsitesTab } from "@/components/admin/websites-tab";
 import { Button } from "@/components/ui/button";
 
-type TabType = "users" | "palettes" | "gradients" | "websites";
+type TabType = "users" | "palettes" | "gradients" | "websites" | "technologies";
 
 export default function AdminDashboard() {
 	const [activeTab, setActiveTab] = useState<TabType>("users");
@@ -19,6 +20,7 @@ export default function AdminDashboard() {
 		{ id: "palettes", label: "Palettes", icon: <Palette size={20} /> },
 		{ id: "gradients", label: "Gradients", icon: <Zap size={20} /> },
 		{ id: "websites", label: "Websites", icon: <Rss size={20} /> },
+		{ id: "technologies", label: "Technologies", icon: <Cpu size={20} /> },
 	];
 
 	return (
@@ -55,6 +57,7 @@ export default function AdminDashboard() {
 				{activeTab === "palettes" && <AdminPalettesTab />}
 				{activeTab === "gradients" && <AdminGradientsTab />}
 				{activeTab === "websites" && <AdminWebsitesTab />}
+				{activeTab === "technologies" && <AdminTechnologiesTab />}
 			</div>
 		</main>
 	);

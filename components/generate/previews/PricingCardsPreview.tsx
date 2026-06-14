@@ -11,7 +11,7 @@ export function PricingCardsPreview({ theme }: PreviewTemplateProps) {
 							key={i}
 							className="rounded-lg border p-2.5 space-y-2"
 							style={{
-								borderColor: featured ? theme.accent : theme.borderSoft,
+								borderColor: featured ? theme.ring : theme.border,
 								backgroundColor: featured ? theme.secondary : theme.cardBg,
 							}}
 						>
@@ -19,7 +19,7 @@ export function PricingCardsPreview({ theme }: PreviewTemplateProps) {
 								className="h-1.5 w-10 rounded-full"
 								style={{
 									backgroundColor: featured
-										? theme.textOnSecondary
+										? theme.secondaryForeground
 										: theme.textBody,
 									opacity: 0.8,
 								}}
@@ -27,7 +27,7 @@ export function PricingCardsPreview({ theme }: PreviewTemplateProps) {
 							<div
 								className="h-4 rounded"
 								style={{
-									backgroundColor: featured ? theme.primary : theme.neutral,
+									backgroundColor: featured ? theme.primary : theme.muted,
 									opacity: 0.7,
 								}}
 							/>
@@ -38,7 +38,7 @@ export function PricingCardsPreview({ theme }: PreviewTemplateProps) {
 										className="h-1 rounded-full"
 										style={{
 											backgroundColor: featured
-												? theme.textOnSecondary
+												? theme.secondaryForeground
 												: theme.textMuted,
 											opacity: 0.45,
 										}}
@@ -48,7 +48,7 @@ export function PricingCardsPreview({ theme }: PreviewTemplateProps) {
 							<div
 								className="h-6 rounded"
 								style={{
-									backgroundColor: featured ? theme.accent : theme.primary,
+									backgroundColor: featured ? theme.primary : theme.secondary,
 									opacity: 0.9,
 								}}
 							/>

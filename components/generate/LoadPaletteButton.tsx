@@ -39,10 +39,10 @@ export function LoadPaletteButton({
 				<div className="space-y-2 max-h-96 overflow-y-auto pr-1 mt-2">
 					{savedPalettes.map((p) => {
 						const colors = [
-							p.primaryColor,
-							p.secondaryColor,
-							p.accentColor,
-							p.neutralColor,
+							p.colors.primary,
+							p.colors.secondary,
+							p.colors.ring,
+							p.colors.background,
 						];
 						return (
 							<button

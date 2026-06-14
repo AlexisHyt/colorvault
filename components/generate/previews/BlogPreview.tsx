@@ -5,13 +5,13 @@ export function BlogPreview({ theme }: PreviewTemplateProps) {
 		<div className="p-4 space-y-2" style={{ backgroundColor: theme.bgPage }}>
 			<div
 				className="h-20 rounded-lg"
-				style={{ backgroundColor: theme.primary, opacity: 0.82 }}
+				style={{ backgroundColor: theme.primary, opacity: 0.88 }}
 			/>
 			<div className="grid grid-cols-[1fr_70px] gap-2">
 				<div
 					className="rounded-lg border p-2.5 space-y-2"
 					style={{
-						borderColor: theme.borderSoft,
+						borderColor: theme.border,
 						backgroundColor: theme.cardBg,
 					}}
 				>
@@ -30,11 +30,11 @@ export function BlogPreview({ theme }: PreviewTemplateProps) {
 					</div>
 					<div
 						className="h-6 w-20 rounded"
-						style={{ backgroundColor: theme.accent, opacity: 0.9 }}
+						style={{ backgroundColor: theme.ring, opacity: 0.9 }}
 					/>
 				</div>
 				<div className="space-y-2">
-					{[theme.secondary, theme.neutral, theme.accent].map(
+					{[theme.secondary, theme.muted, theme.destructive].map(
 						(color, index) => (
 							<div
 								key={`${color}-${index}`}

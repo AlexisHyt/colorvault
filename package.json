@@ -8,7 +8,9 @@
 		"start": "next start",
 		"test:color-converter": "pnpm exec tsx scripts/test-color-converter.ts",
 		"format:check": "pnpx @biomejs/biome check .",
-		"format:fix": "pnpx @biomejs/biome check . --write"
+		"format:fix": "pnpx @biomejs/biome check . --write",
+		"seed:technologies": "node scripts/insert-technologies.mjs",
+		"seed:technologies:more": "node scripts/insert-technologies-more.mjs"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^3.10.0",

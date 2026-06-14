@@ -1,7 +1,7 @@
 "use client";
 
 import { Eye, EyeOff, RefreshCw } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ColorInput } from "@/components/generate/ColorInput";
 import { ExportDialog } from "@/components/generate/ExportDialog";
 import { ImageColorPickerButton } from "@/components/generate/ImageColorPickerButton";
@@ -12,20 +12,60 @@ import { SavePaletteButton } from "@/components/generate/SavePaletteButton";
 import { WcagPanel } from "@/components/generate/WcagPanel";
 import { Button } from "@/components/ui/button";
 import type { SavedPalette } from "@/lib/actions/saved-palettes";
-import {
-	DEFAULT_PRIMARY,
-	ROLE_DESCRIPTIONS,
-	ROLE_LABELS,
-} from "@/lib/generate/constants";
+import { DEFAULT_PRIMARY } from "@/lib/generate/constants";
 import { hslToHex } from "@/lib/generate/hslToHex";
 import { isValidHex } from "@/lib/generate/isValidHex";
 import {
 	type ColorRole,
 	deriveHarmonies,
 	generateWebPalette,
+	type SemanticTokenPalette,
+	toSemanticTokens,
 	type WebPalette,
 } from "@/lib/generate-palette";
 import { oklchaToHex } from "@/lib/utils";
+
+const SEMANTIC_TOKEN_ORDER: (keyof SemanticTokenPalette)[] = [
+	"background",
+	"foreground",
+	"primary",
+	"primary-foreground",
+	"secondary",
+	"secondary-foreground",
+	"muted",
+	"muted-foreground",
+	"border",
+	"input",
+	"ring",
+	"destructive",
+];
+
+const EDITABLE_COLOR_CONTROLS: Array<{
+	role: ColorRole;
+	label: string;
+	description: string;
+}> = [
+	{
+		role: "primary",
+		label: "Primary (--primary)",
+		description: "Main brand color used for key actions.",
+	},
+	{
+		role: "secondary",
+		label: "Secondary (--secondary)",
+		description: "Support color for secondary actions and surfaces.",
+	},
+	{
+		role: "accent",
+		label: "Ring (--ring)",
+		description: "Focus and highlight color used for emphasis.",
+	},
+	{
+		role: "other",
+		label: "Background (--background)",
+		description: "Base background tone used to derive neutral surfaces.",
+	},
+];
 
 export function GeneratePaletteClient({
 	isAuthenticated,
@@ -53,23 +93,21 @@ export function GeneratePaletteClient({
 		}),
 	);
 	const [wcagOpen, setWcagOpen] = useState(false);
+	const secondaryLocked = !!manualOverrides.secondary;
+	const accentLocked = !!manualOverrides.accent;
+	const otherLocked = !!manualOverrides.other;
 
-	const handlePrimaryChange = useCallback(
-		(hex: string) => {
-			if (!isValidHex(hex)) return;
-			setBaseColor(hex);
-			const harmonies = deriveHarmonies(hex);
-			setColorInputs((prev) => ({
-				primary: hex,
-				secondary: manualOverrides.secondary
-					? prev.secondary
-					: harmonies.secondary,
-				accent: manualOverrides.accent ? prev.accent : harmonies.accent,
-				other: manualOverrides.other ? prev.other : harmonies.other,
-			}));
-		},
-		[manualOverrides],
-	);
+	const handlePrimaryChange = (hex: string) => {
+		if (!isValidHex(hex)) return;
+		setBaseColor(hex);
+		const harmonies = deriveHarmonies(hex);
+		setColorInputs((prev) => ({
+			primary: hex,
+			secondary: secondaryLocked ? prev.secondary : harmonies.secondary,
+			accent: accentLocked ? prev.accent : harmonies.accent,
+			other: otherLocked ? prev.other : harmonies.other,
+		}));
+	};
 
 	const handleRoleChange = (role: ColorRole, hex: string) => {
 		if (!isValidHex(hex)) return;
@@ -97,6 +135,8 @@ export function GeneratePaletteClient({
 		}
 	}, [colorInputs]);
 
+	const semanticTokens = useMemo(() => toSemanticTokens(palette), [palette]);
+
 	const randomize = () => {
 		const hue = Math.floor(Math.random() * 360);
 		const sat = 0.5 + Math.random() * 0.3;
@@ -107,10 +147,10 @@ export function GeneratePaletteClient({
 	};
 
 	const loadPalette = (p: SavedPalette) => {
-		const primary = oklchaToHex(p.primaryColor);
-		const secondary = oklchaToHex(p.secondaryColor);
-		const accent = oklchaToHex(p.accentColor);
-		const other = oklchaToHex(p.neutralColor);
+		const primary = oklchaToHex(p.colors.primary);
+		const secondary = oklchaToHex(p.colors.secondary);
+		const accent = oklchaToHex(p.colors.ring);
+		const other = oklchaToHex(p.colors.background);
 		setBaseColor(primary);
 		setManualOverrides({ secondary: true, accent: true, other: true });
 		setColorInputs({ primary, secondary, accent, other });
@@ -173,22 +213,20 @@ export function GeneratePaletteClient({
 								Randomize
 							</Button>
 						</div>
-						{(["primary", "secondary", "accent", "other"] as ColorRole[]).map(
-							(role) => (
-								<ColorInput
-									key={role}
-									label={ROLE_LABELS[role]}
-									description={ROLE_DESCRIPTIONS[role]}
-									value={colorInputs[role]}
-									onChange={(hex) => {
-										if (role === "primary") handlePrimaryChange(hex);
-										else handleRoleChange(role, hex);
-									}}
-									locked={role === "primary" ? true : !!manualOverrides[role]}
-									onToggleLock={() => toggleLock(role)}
-								/>
-							),
-						)}
+						{EDITABLE_COLOR_CONTROLS.map(({ role, label, description }) => (
+							<ColorInput
+								key={role}
+								label={label}
+								description={description}
+								value={colorInputs[role]}
+								onChange={(hex) => {
+									if (role === "primary") handlePrimaryChange(hex);
+									else handleRoleChange(role, hex);
+								}}
+								locked={role === "primary" ? true : !!manualOverrides[role]}
+								onToggleLock={() => toggleLock(role)}
+							/>
+						))}
 
 						<div className="flex items-center justify-start gap-2 pt-1">
 							<ExportDialog palette={palette} />
@@ -198,6 +236,36 @@ export function GeneratePaletteClient({
 								onSaved={(p) => setSavedPalettesList((prev) => [...prev, p])}
 							/>
 						</div>
+
+						<div className="pt-2 border-t border-slate-700/70">
+							<p className="text-slate-400 text-[11px] uppercase tracking-widest font-semibold mb-2">
+								Semantic tokens
+							</p>
+							<div className="space-y-1.5 max-h-74 overflow-y-auto pr-1">
+								{SEMANTIC_TOKEN_ORDER.map((token) => {
+									const color = semanticTokens[token];
+									return (
+										<div
+											key={token}
+											className="flex items-center justify-between gap-2 rounded-md border border-slate-700 bg-slate-900/50 px-2 py-1.5"
+										>
+											<div className="flex items-center gap-2 min-w-0">
+												<div
+													className="w-4 h-4 rounded-sm border border-white/15 shrink-0"
+													style={{ backgroundColor: color }}
+												/>
+												<span className="text-[11px] text-slate-300 font-mono truncate">
+													--{token}
+												</span>
+											</div>
+											<span className="text-[10px] text-slate-500 font-mono truncate max-w-30">
+												{color}
+											</span>
+										</div>
+									);
+								})}
+							</div>
+						</div>
 					</div>
 
 					{/* Right: website preview */}
@@ -205,23 +273,7 @@ export function GeneratePaletteClient({
 						<p className="text-slate-400 text-xs uppercase tracking-widest font-semibold">
 							Preview
 						</p>
-						<PalettePreview colors={colorInputs} />
-						{/* Color chips legend */}
-						<div className="flex gap-3 flex-wrap mt-1">
-							{(["primary", "secondary", "accent", "other"] as ColorRole[]).map(
-								(role) => (
-									<div key={role} className="flex items-center gap-1.5">
-										<div
-											className="w-3 h-3 rounded-full border border-white/10"
-											style={{ backgroundColor: colorInputs[role] }}
-										/>
-										<span className="text-xs text-slate-400">
-											{ROLE_LABELS[role]}
-										</span>
-									</div>
-								),
-							)}
-						</div>
+						<PalettePreview semanticColors={semanticTokens} />
 					</div>
 				</div>
 			</div>

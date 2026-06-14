@@ -29,6 +29,20 @@
       "when": 1777318033924,
       "tag": "0003_make_name_unique_in_saved_palette",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1780355804938,
+      "tag": "0004_replace_color_field_in_saved_palette",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1781460500000,
+      "tag": "0005_add_technology_colors",
+      "breakpoints": true
     }
   ]
 }

@@ -9,26 +9,40 @@ export function useFavorites(initialFavorites: RawFavorite[] = []) {
 	const [favorites, setFavorites] = useState<RawFavorite[]>(initialFavorites);
 
 	const isFavorite = useCallback(
-		(colorId?: number, gradientId?: number, websiteColorId?: number) => {
+		(
+			colorId?: number,
+			gradientId?: number,
+			websiteColorId?: number,
+			technologyColorId?: number,
+		) => {
 			return favorites.some(
 				(fav) =>
 					(colorId !== undefined && fav.colorId === colorId) ||
 					(gradientId !== undefined && fav.gradientId === gradientId) ||
 					(websiteColorId !== undefined &&
-						fav.websiteColorId === websiteColorId),
+						fav.websiteColorId === websiteColorId) ||
+					(technologyColorId !== undefined &&
+						fav.technologyColorId === technologyColorId),
 			);
 		},
 		[favorites],
 	);
 
 	const toggleFavorite = useCallback(
-		async (colorId?: number, gradientId?: number, websiteColorId?: number) => {
+		async (
+			colorId?: number,
+			gradientId?: number,
+			websiteColorId?: number,
+			technologyColorId?: number,
+		) => {
 			const existing = favorites.find(
 				(fav) =>
 					(colorId !== undefined && fav.colorId === colorId) ||
 					(gradientId !== undefined && fav.gradientId === gradientId) ||
 					(websiteColorId !== undefined &&
-						fav.websiteColorId === websiteColorId),
+						fav.websiteColorId === websiteColorId) ||
+					(technologyColorId !== undefined &&
+						fav.technologyColorId === technologyColorId),
 			);
 
 			if (existing) {
@@ -46,6 +60,7 @@ export function useFavorites(initialFavorites: RawFavorite[] = []) {
 						colorId,
 						gradientId,
 						websiteColorId,
+						technologyColorId,
 					});
 					setFavorites((prev) => [...prev, created]);
 				} catch (err) {

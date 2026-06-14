@@ -16,6 +16,7 @@ export function Header() {
 	const navLinks = [
 		{ href: "/palettes", label: "Palettes" },
 		{ href: "/websites", label: "Website Colors" },
+		{ href: "/technologies", label: "Tech Colors" },
 		{ href: "/gradients", label: "Gradients" },
 		{ href: "/generate", label: "Generator" },
 		{ href: "/convert", label: "Converter" },

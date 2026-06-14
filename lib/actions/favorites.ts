@@ -2,7 +2,13 @@
 
 import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
-import { color, gradient, userFavorite, websiteColor } from "@/db/schema";
+import {
+	color,
+	gradient,
+	technologyColor,
+	userFavorite,
+	websiteColor,
+} from "@/db/schema";
 import { getVerifiedSession } from "@/lib/auth-utils";
 
 export type FavoriteColor = {
@@ -36,7 +42,21 @@ export type FavoriteWebsite = {
 	accentColor: string | null;
 };
 
-export type FavoriteItem = FavoriteColor | FavoriteGradient | FavoriteWebsite;
+export type FavoriteTechnology = {
+	favoriteId: number;
+	type: "technology";
+	id: number;
+	name: string;
+	slug: string;
+	category: string;
+	color: string;
+};
+
+export type FavoriteItem =
+	| FavoriteColor
+	| FavoriteGradient
+	| FavoriteWebsite
+	| FavoriteTechnology;
 
 export type RawFavorite = typeof userFavorite.$inferSelect;
 
@@ -57,6 +77,10 @@ export async function getFavoritesWithDetails(
 		.leftJoin(color, eq(userFavorite.colorId, color.id))
 		.leftJoin(gradient, eq(userFavorite.gradientId, gradient.id))
 		.leftJoin(websiteColor, eq(userFavorite.websiteColorId, websiteColor.id))
+		.leftJoin(
+			technologyColor,
+			eq(userFavorite.technologyColorId, technologyColor.id),
+		)
 		.where(eq(userFavorite.userId, userId))
 		.orderBy(userFavorite.createdAt);
 
@@ -95,6 +119,16 @@ export async function getFavoritesWithDetails(
 				secondaryColor: row.website_colors.secondaryColor,
 				accentColor: row.website_colors.accentColor,
 			});
+		} else if (fav.technologyColorId && row.technology_colors) {
+			items.push({
+				favoriteId: fav.id,
+				type: "technology",
+				id: row.technology_colors.id,
+				name: row.technology_colors.name,
+				slug: row.technology_colors.slug,
+				category: row.technology_colors.category,
+				color: row.technology_colors.color,
+			});
 		}
 	}
 
@@ -111,10 +145,12 @@ export async function addFavorite({
 	colorId,
 	gradientId,
 	websiteColorId,
+	technologyColorId,
 }: {
 	colorId?: number;
 	gradientId?: number;
 	websiteColorId?: number;
+	technologyColorId?: number;
 }): Promise<RawFavorite> {
 	const userId = await getAuthenticatedUserId();
 
@@ -125,6 +161,7 @@ export async function addFavorite({
 			colorId: colorId ?? null,
 			gradientId: gradientId ?? null,
 			websiteColorId: websiteColorId ?? null,
+			technologyColorId: technologyColorId ?? null,
 		})
 		.returning();
 

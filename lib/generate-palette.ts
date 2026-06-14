@@ -10,6 +10,38 @@ export type Shade = (typeof SHADES)[number];
 export type PaletteScale = Record<Shade, string>;
 export type WebPalette = Record<ColorRole, PaletteScale>;
 
+export type SemanticTokenPalette = {
+	background: string;
+	foreground: string;
+	primary: string;
+	"primary-foreground": string;
+	secondary: string;
+	"secondary-foreground": string;
+	muted: string;
+	"muted-foreground": string;
+	border: string;
+	input: string;
+	ring: string;
+	destructive: string;
+};
+
+export function toSemanticTokens(palette: WebPalette): SemanticTokenPalette {
+	return {
+		background: palette.other[50],
+		foreground: palette.other[950],
+		primary: palette.primary[600],
+		"primary-foreground": palette.primary[50],
+		secondary: palette.secondary[200],
+		"secondary-foreground": palette.secondary[900],
+		muted: palette.other[100],
+		"muted-foreground": palette.other[600],
+		border: palette.other[300],
+		input: palette.other[300],
+		ring: palette.accent[500],
+		destructive: palette.accent[700],
+	};
+}
+
 /** Generates a shade scale (50→950) from a base hex color */
 export function generateScale(hex: string): PaletteScale {
 	const base = chroma(hex);
@@ -135,16 +167,11 @@ export function generateWebPalette(
 // ─── Export formats ───────────────────────────────────────────────────────────
 
 export function exportAsCSSVariables(palette: WebPalette): string {
+	const semantic = toSemanticTokens(palette);
+
 	const lines = [":root {"];
-	for (const [role, scale] of Object.entries(palette) as [
-		ColorRole,
-		PaletteScale,
-	][]) {
-		lines.push(`  /* ${role} */`);
-		for (const shade of SHADES) {
-			lines.push(`  --color-${role}-${shade}: ${scale[shade]};`);
-		}
-		lines.push("");
+	for (const [token, color] of Object.entries(semantic)) {
+		lines.push(`  --${token}: ${color};`);
 	}
 	lines.push("}");
 	return lines.join("\n");
@@ -152,30 +179,15 @@ export function exportAsCSSVariables(palette: WebPalette): string {
 
 export function exportAsSCSSVariables(palette: WebPalette): string {
 	const lines: string[] = [];
-	for (const [role, scale] of Object.entries(palette) as [
-		ColorRole,
-		PaletteScale,
-	][]) {
-		lines.push(`// ${role}`);
-		for (const shade of SHADES) {
-			lines.push(`$color-${role}-${shade}: ${scale[shade]};`);
-		}
-		lines.push("");
+	const semantic = toSemanticTokens(palette);
+	for (const [token, color] of Object.entries(semantic)) {
+		lines.push(`$${token}: ${color};`);
 	}
 	return lines.join("\n");
 }
 
 export function exportAsTailwindConfig(palette: WebPalette): string {
-	const colors: Record<string, Record<number, string>> = {};
-	for (const [role, scale] of Object.entries(palette) as [
-		ColorRole,
-		PaletteScale,
-	][]) {
-		colors[role] = {};
-		for (const shade of SHADES) {
-			colors[role][shade] = scale[shade];
-		}
-	}
+	const colors = toSemanticTokens(palette);
 	const config = {
 		theme: {
 			extend: {
@@ -187,16 +199,10 @@ export function exportAsTailwindConfig(palette: WebPalette): string {
 }
 
 export function exportAsTailwindV4CSS(palette: WebPalette): string {
+	const semantic = toSemanticTokens(palette);
 	const lines = ["@theme {"];
-	for (const [role, scale] of Object.entries(palette) as [
-		ColorRole,
-		PaletteScale,
-	][]) {
-		lines.push(`  /* ${role} */`);
-		for (const shade of SHADES) {
-			lines.push(`  --color-${role}-${shade}: ${scale[shade]};`);
-		}
-		lines.push("");
+	for (const [token, color] of Object.entries(semantic)) {
+		lines.push(`  --color-${token}: ${color};`);
 	}
 	lines.push("}");
 	return lines.join("\n");
@@ -204,17 +210,12 @@ export function exportAsTailwindV4CSS(palette: WebPalette): string {
 
 export function exportAsFigmaTokens(palette: WebPalette): string {
 	const tokens: Record<string, unknown> = {};
-	for (const [role, scale] of Object.entries(palette) as [
-		ColorRole,
-		PaletteScale,
-	][]) {
-		tokens[role] = {};
-		for (const shade of SHADES) {
-			(tokens[role] as Record<string, unknown>)[shade] = {
-				$value: scale[shade],
-				$type: "color",
-			};
-		}
+	const semantic = toSemanticTokens(palette);
+	for (const [token, color] of Object.entries(semantic)) {
+		tokens[token] = {
+			$value: color,
+			$type: "color",
+		};
 	}
 	return JSON.stringify(tokens, null, 2);
 }

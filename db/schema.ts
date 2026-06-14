@@ -116,6 +116,16 @@ export const gradient = pgTable("gradients", {
 	updatedAt: text("updatedAt").notNull().default("now"),
 });
 
+export const technologyColor = pgTable("technology_colors", {
+	id: serial("id").primaryKey(),
+	name: text("name").notNull(),
+	slug: text("slug").notNull(),
+	category: text("category").notNull(),
+	color: text("color").notNull(),
+	createdAt: text("createdAt").notNull().default("now"),
+	updatedAt: text("updatedAt").notNull().default("now"),
+});
+
 export const userFavorite = pgTable(
 	"user_favorites",
 	{
@@ -126,6 +136,9 @@ export const userFavorite = pgTable(
 		colorId: integer("colorId").references(() => color.id),
 		gradientId: integer("gradientId").references(() => gradient.id),
 		websiteColorId: integer("websiteColorId").references(() => websiteColor.id),
+		technologyColorId: integer("technologyColorId").references(
+			() => technologyColor.id,
+		),
 		createdAt: text("createdAt").notNull().default("now"),
 	},
 	(table) => {
@@ -135,6 +148,7 @@ export const userFavorite = pgTable(
 				table.colorId,
 				table.gradientId,
 				table.websiteColorId,
+				table.technologyColorId,
 			),
 		};
 	},
@@ -146,10 +160,7 @@ export const userPaletteSaved = pgTable("user_palette_saved", {
 		.notNull()
 		.references(() => user.id),
 	name: text("name").notNull().unique(),
-	primaryColor: text("primaryColor").notNull(),
-	secondaryColor: text("secondaryColor").notNull(),
-	accentColor: text("accentColor").notNull(),
-	neutralColor: text("neutralColor").notNull(),
+	colors: text("colors").notNull(),
 	createdAt: text("createdAt").notNull().default("now"),
 });
 

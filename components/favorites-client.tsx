@@ -30,6 +30,7 @@ export function FavoritesClient({
 		colorId: item.type === "color" ? item.id : null,
 		gradientId: item.type === "gradient" ? item.id : null,
 		websiteColorId: item.type === "website" ? item.id : null,
+		technologyColorId: item.type === "technology" ? item.id : null,
 		createdAt: "",
 	}));
 
@@ -41,6 +42,9 @@ export function FavoritesClient({
 	const favoriteColors = activeItems.filter((i) => i.type === "color");
 	const favoriteGradients = activeItems.filter((i) => i.type === "gradient");
 	const favoriteWebsites = activeItems.filter((i) => i.type === "website");
+	const favoriteTechnologies = activeItems.filter(
+		(i) => i.type === "technology",
+	);
 
 	const handleDeletePalette = async (name: string) => {
 		await deleteSavedPalette(name);
@@ -72,10 +76,10 @@ export function FavoritesClient({
 					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 						{savedPalettes.map((palette) => {
 							const roles = [
-								{ label: "Primary", color: palette.primaryColor },
-								{ label: "Secondary", color: palette.secondaryColor },
-								{ label: "Accent", color: palette.accentColor },
-								{ label: "Neutral", color: palette.neutralColor },
+								{ label: "Background", color: palette.colors.background },
+								{ label: "Primary", color: palette.colors.primary },
+								{ label: "Secondary", color: palette.colors.secondary },
+								{ label: "Ring", color: palette.colors.ring },
 							];
 							return (
 								<Card
@@ -308,6 +312,68 @@ export function FavoritesClient({
 													/>
 												</div>
 											)}
+										</div>
+									</div>
+								</Card>
+							);
+						})}
+					</div>
+				</div>
+			)}
+			{/* Technologies */}
+			{favoriteTechnologies.length > 0 && (
+				<div>
+					<h2 className="text-2xl font-semibold text-white mb-4">
+						Technologies ({favoriteTechnologies.length})
+					</h2>
+					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+						{favoriteTechnologies.map((item) => {
+							if (item.type !== "technology") return null;
+							return (
+								<Card
+									key={item.favoriteId}
+									className="overflow-hidden border-slate-700 bg-slate-800/50"
+								>
+									<div className="p-4">
+										<div className="flex items-start justify-between mb-3">
+											<div className="flex items-center gap-3">
+												<img
+													src={`https://cdn.simpleicons.org/${item.slug}/ffffff`}
+													alt={item.name}
+													width={28}
+													height={28}
+													loading="lazy"
+													className="shrink-0"
+												/>
+												<div>
+													<h3 className="font-semibold text-white">
+														{item.name}
+													</h3>
+													<span className="text-xs text-slate-400 capitalize">
+														{item.category}
+													</span>
+												</div>
+											</div>
+											<FavoriteButton
+												technologyColorId={item.id}
+												isFavorite={isFavorite(
+													undefined,
+													undefined,
+													undefined,
+													item.id,
+												)}
+												isAuthenticated={true}
+												onToggle={toggleFavorite}
+											/>
+										</div>
+										<div className="flex items-center gap-2">
+											<div
+												className="w-6 h-6 rounded border border-slate-600 shrink-0"
+												style={{
+													backgroundColor: oklchaToHex(item.color),
+												}}
+											/>
+											<CopyButton value={oklchaToHex(item.color)} label="HEX" />
 										</div>
 									</div>
 								</Card>

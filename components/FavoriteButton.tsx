@@ -7,12 +7,14 @@ interface Props {
 	colorId?: number;
 	gradientId?: number;
 	websiteColorId?: number;
+	technologyColorId?: number;
 	isFavorite: boolean;
 	isAuthenticated: boolean;
 	onToggle: (
 		colorId?: number,
 		gradientId?: number,
 		websiteColorId?: number,
+		technologyColorId?: number,
 	) => void;
 	className?: string;
 }
@@ -21,6 +23,7 @@ export function FavoriteButton({
 	colorId,
 	gradientId,
 	websiteColorId,
+	technologyColorId,
 	isFavorite,
 	isAuthenticated,
 	onToggle,
@@ -33,7 +36,7 @@ export function FavoriteButton({
 			type="button"
 			onClick={(e) => {
 				e.stopPropagation();
-				onToggle(colorId, gradientId, websiteColorId);
+				onToggle(colorId, gradientId, websiteColorId, technologyColorId);
 			}}
 			className={cn(
 				"p-1.5 rounded-full transition-colors cursor-pointer",
