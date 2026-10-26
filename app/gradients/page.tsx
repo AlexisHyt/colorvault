@@ -5,6 +5,8 @@ import { getFavorites } from "@/lib/actions/favorites";
 import { getGradients } from "@/lib/actions/gradients";
 import { auth } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
 	title: "Beautiful Gradients — ColorVault",
 	description:

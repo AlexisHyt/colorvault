@@ -4,6 +4,8 @@ import { getFavorites } from "@/lib/actions/favorites";
 import { getWebsiteColors } from "@/lib/actions/website-colors";
 import { getVerifiedSession } from "@/lib/auth-utils";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
 	title: "Brand Colors from Websites — ColorVault",
 	description:

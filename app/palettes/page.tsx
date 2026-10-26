@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { getPalettes } from "@/lib/actions/admin/palette/getPalettes";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
 	title: "Color Palettes — ColorVault",
 	description:
