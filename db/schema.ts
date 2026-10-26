@@ -19,6 +19,8 @@ export const user = pgTable("user", {
 		.notNull()
 		.default("user"),
 	banned: boolean("banned").notNull().default(false),
+	banReason: text("banReason"),
+	banExpires: timestamp("banExpires"),
 	createdAt: timestamp("createdAt").notNull(),
 	updatedAt: timestamp("updatedAt").notNull(),
 });
@@ -32,6 +34,7 @@ export const session = pgTable("session", {
 	expiresAt: timestamp("expiresAt").notNull(),
 	ipAddress: text("ipAddress"),
 	userAgent: text("userAgent"),
+	impersonatedBy: text("impersonatedBy"),
 	createdAt: timestamp("createdAt").notNull(),
 	updatedAt: timestamp("updatedAt").notNull(),
 });

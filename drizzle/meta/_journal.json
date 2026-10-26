@@ -43,6 +43,13 @@
       "when": 1781460500000,
       "tag": "0005_add_technology_colors",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792926000000,
+      "tag": "0006_add_admin_plugin_fields",
+      "breakpoints": true
     }
   ]
 }
