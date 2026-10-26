@@ -1,5 +1,5 @@
 #!/bin/sh
-pnpm run format:check
+bun run format:check
 if [ $? -ne 0 ]; then
   echo "Linting failed. Please fix the errors before committing."
   exit 1
